@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 interface NavItem {
   name: string;
@@ -26,6 +27,18 @@ interface SidebarProps {
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutConfirm(false);
+    }
+  };
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -133,9 +146,9 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
               </div>
             </div>
             <button
-              onClick={() => logout()}
+              onClick={() => setShowLogoutConfirm(true)}
               title="Sign out of portal"
-              className="p-1.5 text-outline hover:text-error hover:bg-error-container/30 rounded-md transition-colors"
+              className="p-1.5 text-outline hover:text-error hover:bg-error-container/30 rounded-md transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-[18px]">
                 logout
@@ -144,6 +157,19 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           </div>
         </div>
       </aside>
+
+      {/* Sign Out Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Sign Out of Portal"
+        message="Are you sure you want to log out of the Doctor Tracker clinical administration console? Your active session will be ended."
+        confirmText="Sign Out"
+        cancelText="Cancel"
+        isDestructive={true}
+        isLoading={isLoggingOut}
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </>
   );
 }
