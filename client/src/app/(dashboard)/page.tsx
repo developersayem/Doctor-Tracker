@@ -47,7 +47,9 @@ export default function DashboardPage() {
       const res = await apiClient.get<ApiResponse<AnalyticsData>>(`/analytics/dashboard?range=${timeRange}`);
       return res.data;
     },
-    refetchInterval: 30000, // Live poll every 30 seconds
+    staleTime: 0,              // Always treat as stale — refetch on every mount/focus
+    refetchOnMount: 'always',  // Force refetch every time the dashboard mounts
+    refetchInterval: 30000,    // Live poll every 30 seconds
   });
 
   const analytics = analyticsRes?.data;

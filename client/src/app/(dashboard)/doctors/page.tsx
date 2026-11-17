@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 import { Doctor, ApiResponse, PaginationMeta } from '@/types';
 import { getDoctorStatusBadgeClass, formatDoctorStatus } from '@/lib/utils';
@@ -34,6 +34,8 @@ export default function DoctorsPage() {
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  const queryClient = useQueryClient();
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,6 +95,8 @@ export default function DoctorsPage() {
       toast.success(`Physician ${doctorToDelete.name} removed from registry`);
       setDoctorToDelete(null);
       refetch();
+      // Invalidate dashboard analytics so physician count and workload refresh
+      queryClient.invalidateQueries({ queryKey: ['analytics-dashboard'] });
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
@@ -392,7 +396,11 @@ export default function DoctorsPage() {
       <DoctorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => refetch()}
+        onSuccess={() => {
+          refetch();
+          // Invalidate dashboard so physician count and workload allocation refresh
+          queryClient.invalidateQueries({ queryKey: ['analytics-dashboard'] });
+        }}
         doctor={selectedDoctor}
       />
 

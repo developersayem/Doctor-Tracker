@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 import { Patient, Doctor, ApiResponse, PaginationMeta } from '@/types';
 import { formatDate, getConditionBadge } from '@/lib/utils';
@@ -25,6 +25,8 @@ export default function PatientsPage() {
   const [selectedDoctorId, setSelectedDoctorId] = useState('');
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  const queryClient = useQueryClient();
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,6 +97,8 @@ export default function PatientsPage() {
       toast.success(`Patient record for ${patientToDelete.name} discharged`);
       setPatientToDelete(null);
       refetch();
+      // Invalidate dashboard analytics so KPI counts are fresh
+      queryClient.invalidateQueries({ queryKey: ['analytics-dashboard'] });
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
@@ -392,7 +396,11 @@ export default function PatientsPage() {
       <PatientModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => refetch()}
+        onSuccess={() => {
+          refetch();
+          // Keep dashboard KPIs in sync when a patient is created or updated
+          queryClient.invalidateQueries({ queryKey: ['analytics-dashboard'] });
+        }}
         patient={selectedPatient}
       />
 

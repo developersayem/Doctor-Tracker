@@ -13,9 +13,12 @@ export default function QueryProvider({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 1000 * 60 * 3, // 3 minutes stale time to avoid repeat fetching
-            gcTime: 1000 * 60 * 15, // 15 minutes garbage collection cache
-            refetchOnWindowFocus: false,
+            // Keep list/detail queries cached for 60s to avoid redundant fetches while
+            // navigating within the same page — analytics queries override this to 0.
+            staleTime: 1000 * 60,       // 1 minute default
+            gcTime: 1000 * 60 * 15,     // 15 minutes garbage collection
+            refetchOnWindowFocus: true,  // Refetch when user returns to the tab
+            refetchOnMount: true,        // Refetch when a component mounts
             retry: 1,
           },
         },
