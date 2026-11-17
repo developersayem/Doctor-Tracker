@@ -14,8 +14,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: 'grid_view' },
-  { name: 'Doctors Directory', href: '/doctors', icon: 'stethoscope' },
-  { name: 'Patients Registry', href: '/patients', icon: 'vital_signs' },
+  { name: 'Doctors', href: '/doctors', icon: 'stethoscope' },
+  { name: 'Patients', href: '/patients', icon: 'vital_signs' },
 ];
 
 export default function Sidebar() {
@@ -32,16 +32,26 @@ export default function Sidebar() {
       {/* Top Header / Brand */}
       <div className="flex flex-col flex-1">
         <div className="h-16 px-space-lg flex items-center gap-space-sm border-b border-outline-variant/30">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm shrink-0">
-            <span className="material-symbols-outlined text-[20px]">
-              local_hospital
-            </span>
+          <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-sm shrink-0">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 4.5v15m7.5-7.5h-15"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="font-headline font-bold text-headline-sm text-on-surface truncate leading-tight">
+            <span className="font-headline font-bold text-base text-slate-900 truncate leading-tight">
               Doctor Tracker
             </span>
-            <span className="font-mono text-[11px] text-primary tracking-wider uppercase font-bold">
+            <span className="font-mono text-[11px] text-teal-700 tracking-wider uppercase font-bold">
               ADMIN PORTAL
             </span>
           </div>
@@ -50,7 +60,7 @@ export default function Sidebar() {
         {/* Navigation list */}
         <div className="px-space-md py-space-lg">
           <div className="px-space-sm mb-space-xs font-mono text-[11px] text-outline uppercase tracking-wider font-semibold">
-            Clinical Registry
+            NAVIGATION
           </div>
           <nav className="flex flex-col gap-1.5">
             {navItems.map((item) => {
@@ -62,7 +72,7 @@ export default function Sidebar() {
                   className={cn(
                     'flex items-center gap-space-sm px-space-md py-2.5 rounded-lg transition-all text-sm font-medium',
                     active
-                      ? 'bg-primary text-on-primary font-bold shadow-sm'
+                      ? 'bg-teal-700 text-white font-bold shadow-sm'
                       : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
                   )}
                 >
@@ -83,8 +93,8 @@ export default function Sidebar() {
 
         {/* Clinical Environment Telemetry */}
         <div className="mx-space-md mt-auto mb-4 p-space-sm bg-surface-container-low rounded-xl border border-outline-variant/30 text-xs">
-          <div className="flex items-center gap-1.5 text-primary font-semibold mb-1">
-            <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+          <div className="flex items-center gap-1.5 text-teal-700 font-semibold mb-1">
+            <span className="w-2 h-2 rounded-full bg-teal-600 animate-ping"></span>
             <span>Live Node Connected</span>
           </div>
           <p className="text-on-surface-variant text-[11px] leading-relaxed">
@@ -97,7 +107,7 @@ export default function Sidebar() {
       <div className="p-space-md border-t border-outline-variant/30 bg-surface-container-lowest">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
+            <div className="w-8 h-8 rounded-full bg-teal-600/10 border border-teal-600/20 flex items-center justify-center text-teal-700 font-bold text-xs uppercase shrink-0">
               {user?.name ? user.name.slice(0, 2).toUpperCase() : 'AD'}
             </div>
             <div className="flex flex-col min-w-0">
