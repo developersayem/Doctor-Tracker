@@ -158,12 +158,10 @@ export default function DoctorDetailPage() {
                 {doctor.name}
               </h1>
               <span
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs ${statusBadge.bg}`}
+                className={`inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide ${statusBadge.bg}`}
               >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`}
-                ></span>
-                <span>{formatDoctorStatus(doctor.status)}</span>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${statusBadge.dot}`}></span>
+                {formatDoctorStatus(doctor.status)}
               </span>
             </div>
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 import { Patient, Doctor, ApiResponse, PaginationMeta } from '@/types';
-import { formatDate, getConditionBadgeClass } from '@/lib/utils';
+import { formatDate, getConditionBadge } from '@/lib/utils';
 import PatientModal from '@/components/patients/PatientModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
@@ -253,7 +253,7 @@ export default function PatientsPage() {
                 </tr>
               ) : (
                 patients.map((patient) => {
-                  const badge = getConditionBadgeClass(patient.condition);
+                  const badge = getConditionBadge(patient.condition);
                   const doc =
                     typeof patient.doctorId === 'object'
                       ? (patient.doctorId as Doctor)
@@ -282,12 +282,10 @@ export default function PatientsPage() {
 
                       <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs ${badge.bg}`}
+                          className={`inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide ${badge.pill}`}
                         >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${badge.dot}`}
-                          ></span>
-                          <span>{patient.condition}</span>
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${badge.dot}`}></span>
+                          {patient.condition}
                         </span>
                       </td>
 
@@ -320,24 +318,24 @@ export default function PatientsPage() {
                       </td>
 
                       <td className="py-3.5 px-4 text-right">
-                        <div className="inline-flex items-center gap-1">
+                        <div className="inline-flex items-center gap-0.5">
                           <button
                             type="button"
                             onClick={() => handleEdit(patient)}
-                            className="p-1.5 text-outline hover:text-secondary hover:bg-surface-container rounded-md transition-colors"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-outline hover:text-secondary hover:bg-secondary/10 transition-colors"
                             title="Edit Record"
                           >
-                            <span className="material-symbols-outlined text-[18px]">
+                            <span className="material-symbols-outlined" style={{fontSize: '16px', fontVariationSettings: "'FILL' 0, 'wght' 400"}}>
                               edit
                             </span>
                           </button>
                           <button
                             type="button"
                             onClick={() => setPatientToDelete(patient)}
-                            className="p-1.5 text-outline hover:text-error hover:bg-error-container/30 rounded-md transition-colors"
-                            title="Discharge Patient"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-outline hover:text-error hover:bg-error/10 transition-colors"
+                            title="Remove Patient"
                           >
-                            <span className="material-symbols-outlined text-[18px]">
+                            <span className="material-symbols-outlined" style={{fontSize: '16px', fontVariationSettings: "'FILL' 0, 'wght' 400"}}>
                               delete
                             </span>
                           </button>

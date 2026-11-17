@@ -32,6 +32,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jakartaSans.variable}`}>
+      <head>
+        {/* Material Symbols Outlined — loaded as a <link> for reliable SSR + CSR delivery */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+        />
+      </head>
       <body
         className="bg-surface text-on-surface min-h-screen font-sans antialiased"
         suppressHydrationWarning

@@ -280,12 +280,10 @@ export default function DoctorsPage() {
 
                       <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs ${statusBadge.bg}`}
+                          className={`inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide ${statusBadge.bg}`}
                         >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`}
-                          ></span>
-                          <span>{formatDoctorStatus(doc.status)}</span>
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${statusBadge.dot}`}></span>
+                          {formatDoctorStatus(doc.status)}
                         </span>
                       </td>
 
@@ -314,33 +312,33 @@ export default function DoctorsPage() {
                       </td>
 
                       <td className="py-3.5 px-4 text-right">
-                        <div className="inline-flex items-center gap-1">
+                        <div className="inline-flex items-center gap-0.5">
                           <Link
                             href={`/doctors/${doc._id}`}
-                            className="p-1.5 text-outline hover:text-primary hover:bg-surface-container rounded-md transition-colors"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-outline hover:text-primary hover:bg-primary/10 transition-colors"
                             title="View Physician Profile & Patients"
                           >
-                            <span className="material-symbols-outlined text-[18px]">
+                            <span className="material-symbols-outlined" style={{fontSize: '16px', fontVariationSettings: "'FILL' 0, 'wght' 400"}}>
                               visibility
                             </span>
                           </Link>
                           <button
                             type="button"
                             onClick={() => handleEdit(doc)}
-                            className="p-1.5 text-outline hover:text-secondary hover:bg-surface-container rounded-md transition-colors"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-outline hover:text-secondary hover:bg-secondary/10 transition-colors"
                             title="Edit Credentials"
                           >
-                            <span className="material-symbols-outlined text-[18px]">
+                            <span className="material-symbols-outlined" style={{fontSize: '16px', fontVariationSettings: "'FILL' 0, 'wght' 400"}}>
                               edit
                             </span>
                           </button>
                           <button
                             type="button"
                             onClick={() => setDoctorToDelete(doc)}
-                            className="p-1.5 text-outline hover:text-error hover:bg-error-container/30 rounded-md transition-colors"
-                            title="Delete Physician"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-outline hover:text-error hover:bg-error/10 transition-colors"
+                            title="Remove Physician"
                           >
-                            <span className="material-symbols-outlined text-[18px]">
+                            <span className="material-symbols-outlined" style={{fontSize: '16px', fontVariationSettings: "'FILL' 0, 'wght' 400"}}>
                               delete
                             </span>
                           </button>
