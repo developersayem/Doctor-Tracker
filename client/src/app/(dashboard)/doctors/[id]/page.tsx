@@ -118,11 +118,12 @@ export default function DoctorDetailPage() {
   }
 
   const statusBadge = getDoctorStatusBadgeClass(doctor.status);
-  const patientCount = patients.length;
+  const patientCount = patients.length || 0;
+  const maxCap = doctor.maxCapacity || 20;
   const capacityPct = Math.min(
     100,
-    Math.round((patientCount / doctor.maxCapacity) * 100)
-  );
+    Math.round((patientCount / maxCap) * 100)
+  ) || 0;
 
   const criticalCount = patients.filter((p) =>
     p.condition.toLowerCase().includes('critical')
@@ -243,7 +244,7 @@ export default function DoctorDetailPage() {
             <div className="font-headline text-2xl font-bold text-on-surface mt-1">
               {patientCount}{' '}
               <span className="text-xs font-normal text-outline">
-                / {doctor.maxCapacity} cap
+                / {maxCap} cap
               </span>
             </div>
             <div className="w-32 bg-surface-container rounded-full h-1.5 mt-2 overflow-hidden">
@@ -288,7 +289,7 @@ export default function DoctorDetailPage() {
               {capacityPct}%
             </div>
             <span className="text-[11px] text-outline mt-1 block">
-              {doctor.maxCapacity - patientCount} slots remaining
+              {Math.max(0, maxCap - patientCount)} slots remaining
             </span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center">

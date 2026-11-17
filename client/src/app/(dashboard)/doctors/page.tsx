@@ -239,10 +239,11 @@ export default function DoctorsPage() {
                 doctors.map((doc) => {
                   const statusBadge = getDoctorStatusBadgeClass(doc.status);
                   const patientCount = doc.patientCount || 0;
+                  const maxCap = doc.maxCapacity || 20;
                   const capacityPct = Math.min(
                     100,
-                    Math.round((patientCount / doc.maxCapacity) * 100)
-                  );
+                    Math.round((patientCount / maxCap) * 100)
+                  ) || 0;
 
                   return (
                     <tr
@@ -295,7 +296,7 @@ export default function DoctorsPage() {
                             <span className="font-bold text-on-surface">
                               {patientCount} pts
                             </span>
-                            <span className="text-outline">/{doc.maxCapacity}</span>
+                            <span className="text-outline">/{maxCap}</span>
                           </div>
                           <div className="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
                             <div
@@ -363,9 +364,9 @@ export default function DoctorsPage() {
             </span>{' '}
             to{' '}
             <span className="font-bold text-on-surface">
-              {Math.min(meta.page * limit, meta.total)}
+              {Math.min(meta.page * limit, meta.total || 0)}
             </span>{' '}
-            of <span className="font-bold text-on-surface">{meta.total}</span>{' '}
+            of <span className="font-bold text-on-surface">{meta.total || 0}</span>{' '}
             physicians
           </div>
 

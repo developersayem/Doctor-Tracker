@@ -360,9 +360,9 @@ export default function PatientsPage() {
             </span>{' '}
             to{' '}
             <span className="font-bold text-on-surface">
-              {Math.min(meta.page * limit, meta.total)}
+              {Math.min(meta.page * limit, meta.total || 0)}
             </span>{' '}
-            of <span className="font-bold text-on-surface">{meta.total}</span>{' '}
+            of <span className="font-bold text-on-surface">{meta.total || 0}</span>{' '}
             encounters
           </div>
 

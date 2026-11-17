@@ -229,13 +229,14 @@ export default function PatientModal({
                 min={0}
                 max={130}
                 required
-                value={formData.age}
-                onChange={(e) =>
+                value={Number.isNaN(formData.age) ? '' : formData.age}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
                   setFormData({
                     ...formData,
-                    age: parseInt(e.target.value, 10) || 0,
-                  })
-                }
+                    age: Number.isNaN(val) ? 0 : val,
+                  });
+                }}
                 className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>

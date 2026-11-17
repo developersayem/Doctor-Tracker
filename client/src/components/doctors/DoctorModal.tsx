@@ -263,13 +263,14 @@ export default function DoctorModal({
                 min={1}
                 max={100}
                 required
-                value={formData.maxCapacity}
-                onChange={(e) =>
+                value={Number.isNaN(formData.maxCapacity) ? '' : formData.maxCapacity}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
                   setFormData({
                     ...formData,
-                    maxCapacity: parseInt(e.target.value, 10) || 1,
-                  })
-                }
+                    maxCapacity: Number.isNaN(val) ? 1 : val,
+                  });
+                }}
                 className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
@@ -283,13 +284,14 @@ export default function DoctorModal({
                 min={0}
                 max={60}
                 required
-                value={formData.yearsOfExperience}
-                onChange={(e) =>
+                value={Number.isNaN(formData.yearsOfExperience) ? '' : formData.yearsOfExperience}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
                   setFormData({
                     ...formData,
-                    yearsOfExperience: parseInt(e.target.value, 10) || 0,
-                  })
-                }
+                    yearsOfExperience: Number.isNaN(val) ? 0 : val,
+                  });
+                }}
                 className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>

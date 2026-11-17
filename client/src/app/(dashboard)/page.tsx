@@ -58,6 +58,11 @@ export default function DashboardPage() {
     criticalPatients: 0,
   };
 
+  const totalDoctorsNum = Number(kpis.totalDoctors) || 0;
+  const totalPatientsNum = Number(kpis.totalPatients) || 0;
+  const avgPatientsNum = Number(kpis.avgPatientsPerDoctor) || 0;
+  const criticalPatientsNum = Number(kpis.criticalPatients) || 0;
+
   const workload = analytics?.patientWorkload || [];
   const admissionTrends = analytics?.admissionTrends || [];
   const recentAssignments = analytics?.recentAssignments || [];
@@ -138,7 +143,7 @@ export default function DashboardPage() {
                 Physician Roster
               </span>
               <div className="font-headline text-3xl font-bold text-on-surface mt-1">
-                {isLoading ? '...' : kpis.totalDoctors}
+                {isLoading ? '...' : totalDoctorsNum}
               </div>
             </div>
             <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
@@ -186,7 +191,7 @@ export default function DashboardPage() {
                 Active Census
               </span>
               <div className="font-headline text-3xl font-bold text-on-surface mt-1">
-                {isLoading ? '...' : kpis.totalPatients}
+                {isLoading ? '...' : totalPatientsNum}
               </div>
             </div>
             <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
@@ -200,11 +205,11 @@ export default function DashboardPage() {
             <div className="flex-1 bg-surface-container rounded-full h-2 overflow-hidden">
               <div
                 className="bg-secondary h-full rounded-full transition-all duration-1000"
-                style={{ width: `${Math.min(100, (kpis.totalPatients / 100) * 100)}%` }}
+                style={{ width: `${Math.min(100, (totalPatientsNum / 100) * 100)}%` }}
               ></div>
             </div>
             <span className="font-mono text-xs text-on-surface font-semibold">
-              {Math.min(100, Math.round((kpis.totalPatients / 100) * 100))}% cap
+              {Math.min(100, Math.round((totalPatientsNum / 100) * 100))}% cap
             </span>
           </div>
 
@@ -227,7 +232,7 @@ export default function DashboardPage() {
                 Density Ratio
               </span>
               <div className="font-headline text-3xl font-bold text-on-surface mt-1">
-                {isLoading ? '...' : kpis.avgPatientsPerDoctor}
+                {isLoading ? '...' : avgPatientsNum}
                 <span className="text-base font-normal text-outline ml-1">/doc</span>
               </div>
             </div>
@@ -248,7 +253,7 @@ export default function DashboardPage() {
               <div
                 className="h-full bg-primary rounded-full transition-all"
                 style={{
-                  width: `${Math.min(100, (kpis.avgPatientsPerDoctor / 25) * 100)}%`,
+                  width: `${Math.min(100, (avgPatientsNum / 25) * 100)}%`,
                 }}
               ></div>
             </div>
@@ -271,7 +276,7 @@ export default function DashboardPage() {
                 Critical Priority
               </span>
               <div className="font-headline text-3xl font-bold text-error mt-1">
-                {isLoading ? '...' : kpis.criticalPatients}
+                {isLoading ? '...' : criticalPatientsNum}
                 <span className="text-base font-normal text-outline ml-1">cases</span>
               </div>
             </div>
