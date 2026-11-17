@@ -13,7 +13,7 @@ export interface Doctor {
   specialization: string;
   contactNumber: string;
   email: string;
-  hospital: string;
+  hospital?: string;
   status: 'active' | 'on-leave';
   patientCount?: number;
   maxCapacity: number;

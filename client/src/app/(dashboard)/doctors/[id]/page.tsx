@@ -169,13 +169,7 @@ export default function DoctorDetailPage() {
               <span className="px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-semibold">
                 {doctor.specialization}
               </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[16px] text-outline">
-                  domain
-                </span>
-                {doctor.hospital}
-              </span>
+
               <span>•</span>
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[16px] text-outline">

@@ -164,7 +164,7 @@ export default function PatientModal({
   const doctorOptions: SelectOption[] = doctors.map((d) => ({
     value: d._id,
     label: d.name,
-    description: `${d.specialization} • ${d.hospital.split(' - ')[0]}`,
+    description: d.specialization,
     icon: 'stethoscope',
     badge: d.status === 'active' ? 'On Duty' : d.status,
     statusDot: d.status === 'active' ? 'active' : 'leave',

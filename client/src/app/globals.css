@@ -5,11 +5,34 @@
 @tailwind utilities;
 
 @layer base {
-  /* next/font injects --font-inter and --font-jakarta via the html element class.
-     These fallbacks apply before next/font activates. */
+  /* CSS Variables for surface, containers, and text to support seamless Dark Mode */
   :root {
     --font-inter: 'Inter', system-ui, sans-serif;
     --font-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+    --color-surface: #faf8ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f2f3ff;
+    --color-surface-container: #eaedff;
+    --color-surface-container-high: #e2e7ff;
+    --color-surface-container-highest: #dae2fd;
+    --color-on-surface: #131b2e;
+    --color-on-surface-variant: #3d4947;
+    --color-outline: #6d7a77;
+    --color-outline-variant: #bcc9c6;
+  }
+
+  html.dark {
+    --color-surface: #0a0f1d;
+    --color-surface-container-lowest: #0f172a;
+    --color-surface-container-low: #141e34;
+    --color-surface-container: #1b2640;
+    --color-surface-container-high: #243250;
+    --color-surface-container-highest: #2e3e60;
+    --color-on-surface: #f1f5f9;
+    --color-on-surface-variant: #94a3b8;
+    --color-outline: #64748b;
+    --color-outline-variant: #334155;
   }
 
   html,
@@ -17,10 +40,11 @@
     margin: 0;
     padding: 0;
     font-family: var(--font-inter);
-    background-color: #faf8ff;
-    color: #131b2e;
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Page header h1 — refined display type */

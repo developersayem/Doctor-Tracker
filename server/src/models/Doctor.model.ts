@@ -29,7 +29,7 @@ const doctorSchema = new Schema<IDoctor>(
     },
     hospital: {
       type: String,
-      required: [true, "Hospital/Clinic affiliation is required"],
+      required: false,
       trim: true,
       index: true,
     },

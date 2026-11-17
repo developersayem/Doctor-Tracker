@@ -24,9 +24,9 @@ export const createDoctorSchema = z.object({
     .min(2, "Specialization must be at least 2 characters")
     .trim(),
   hospital: z
-    .string({ required_error: "Hospital name is required" })
-    .min(2, "Hospital name must be at least 2 characters")
-    .trim(),
+    .string()
+    .trim()
+    .optional(),
   phone: z
     .string({ required_error: "Phone number is required" })
     .min(7, "Phone number is too short")

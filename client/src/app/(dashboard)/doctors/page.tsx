@@ -154,7 +154,7 @@ export default function DoctorsPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            placeholder="Search by physician name, specialty, or hospital..."
+            placeholder="Search by physician name or specialty..."
             className="w-full h-10 pl-9 pr-4 bg-surface-container-low/50 border border-outline-variant/40 rounded-lg text-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-all"
           />
         </div>
@@ -213,7 +213,6 @@ export default function DoctorsPage() {
               <tr className="bg-surface-container-low text-[11px] font-mono text-outline uppercase tracking-wider">
                 <th className="py-3 px-4">Physician Name</th>
                 <th className="py-3 px-4">Specialty</th>
-                <th className="py-3 px-4">Hospital Affiliation</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4">Patient Load</th>
                 <th className="py-3 px-4">Contact</th>
@@ -223,14 +222,14 @@ export default function DoctorsPage() {
             <tbody className="text-sm divide-y divide-surface-container">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-outline text-xs">
+                  <td colSpan={6} className="py-12 text-center text-outline text-xs">
                     <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-2"></div>
                     <span>Querying physician database...</span>
                   </td>
                 </tr>
               ) : doctors.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-outline text-xs">
+                  <td colSpan={6} className="py-12 text-center text-outline text-xs">
                     No physicians found matching your search criteria.
                   </td>
                 </tr>
@@ -274,9 +273,7 @@ export default function DoctorsPage() {
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 text-xs text-on-surface-variant font-medium">
-                        {doc.hospital}
-                      </td>
+
 
                       <td className="py-3.5 px-4">
                         <span

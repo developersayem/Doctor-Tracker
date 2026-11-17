@@ -27,14 +27,6 @@ const SPECIALTY_OPTIONS: SelectOption[] = [
   { value: 'Pulmonology', label: 'Pulmonology', icon: 'air', description: 'Respiratory Care Unit' },
 ];
 
-const HOSPITAL_OPTIONS: SelectOption[] = [
-  { value: 'Metro General Hospital - Central', label: 'Metro General Hospital - Central', description: 'Central Campus • 680 Beds', icon: 'apartment', badge: 'Primary' },
-  { value: 'St. Jude Medical Center', label: 'St. Jude Medical Center', description: 'North Pavilion • 320 Beds', icon: 'domain', badge: 'Pavilion' },
-  { value: 'Memorial Sloan Pavilion', label: 'Memorial Sloan Pavilion', description: 'East Wing • 280 Beds', icon: 'local_hospital' },
-  { value: 'Mount Sinai Healthcare', label: 'Mount Sinai Healthcare', description: 'Academic Center • 450 Beds', icon: 'apartment' },
-  { value: 'Johns Hopkins Academic Hospital', label: 'Johns Hopkins Academic Hospital', description: 'Research Campus • 510 Beds', icon: 'domain' },
-];
-
 const STATUS_OPTIONS: SelectOption[] = [
   { value: 'active', label: 'Active', statusDot: 'active', description: 'On Duty • Receiving Patients' },
   { value: 'on-leave', label: 'On Leave', statusDot: 'leave', description: 'Temporary Absence' },
@@ -54,7 +46,6 @@ export default function DoctorModal({
     specialization: 'Cardiology',
     contactNumber: '',
     email: '',
-    hospital: 'Metro General Hospital - Central',
     status: 'active' as 'active' | 'on-leave',
     maxCapacity: 20,
     yearsOfExperience: 5,
@@ -85,7 +76,6 @@ export default function DoctorModal({
         specialization: doctor.specialization || 'Cardiology',
         contactNumber: doctor.contactNumber || '',
         email: doctor.email || '',
-        hospital: doctor.hospital || 'Metro General Hospital - Central',
         status: doctor.status || 'active',
         maxCapacity: doctor.maxCapacity || 20,
         yearsOfExperience: doctor.yearsOfExperience || 5,
@@ -97,7 +87,6 @@ export default function DoctorModal({
         specialization: 'Cardiology',
         contactNumber: '',
         email: '',
-        hospital: 'Metro General Hospital - Central',
         status: 'active',
         maxCapacity: 20,
         yearsOfExperience: 5,
@@ -179,8 +168,8 @@ export default function DoctorModal({
             />
           </div>
 
-          {/* Specialization & Hospital Row (Custom Dropdowns) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Medical Specialty */}
+          <div>
             <CustomSelect
               label="Medical Specialty"
               required
@@ -190,17 +179,6 @@ export default function DoctorModal({
               searchable
               placeholder="Select specialty..."
               icon="medical_services"
-            />
-
-            <CustomSelect
-              label="Affiliated Hospital"
-              required
-              options={HOSPITAL_OPTIONS}
-              value={formData.hospital}
-              onChange={(val) => setFormData({ ...formData, hospital: val })}
-              searchable
-              placeholder="Select facility..."
-              icon="apartment"
             />
           </div>
 
