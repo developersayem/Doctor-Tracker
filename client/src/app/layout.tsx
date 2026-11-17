@@ -16,8 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-surface text-on-surface min-h-screen">
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className="bg-surface text-on-surface min-h-screen"
+        suppressHydrationWarning
+      >
         <QueryProvider>
           <AuthProvider>
             {children}
