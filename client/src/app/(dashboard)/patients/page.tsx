@@ -282,7 +282,7 @@ export default function PatientsPage() {
 
                       <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide ${badge.pill}`}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide ${badge.pill}`}
                         >
                           <span className={`w-2 h-2 rounded-full shrink-0 ${badge.dot}`}></span>
                           {patient.condition}

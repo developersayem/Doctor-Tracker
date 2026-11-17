@@ -309,7 +309,7 @@ export default function Topbar({
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${statusBadge.bg}`}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${statusBadge.bg}`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`}
@@ -376,7 +376,7 @@ export default function Topbar({
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${badge.pill}`}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${badge.pill}`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${badge.dot}`}
