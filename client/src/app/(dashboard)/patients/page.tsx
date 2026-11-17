@@ -110,19 +110,19 @@ export default function PatientsPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-xs uppercase tracking-wider text-secondary font-bold">
-              Inpatient & Clinic Census
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-sans text-[10px] uppercase tracking-widest text-secondary font-semibold">
+              Inpatient &amp; Clinic Census
             </span>
-            <span className="text-outline text-xs">•</span>
-            <span className="font-mono text-xs text-outline font-medium">
+            <span className="text-outline/40 text-xs">•</span>
+            <span className="font-sans text-[11px] text-outline/70 font-medium">
               {meta.total} Registered Encounters
             </span>
           </div>
-          <h1 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+          <h1 className="font-headline text-[1.75rem] sm:text-[2rem] font-extrabold text-on-surface tracking-tighter leading-[1.1]">
             Central Patient Registry
           </h1>
-          <p className="text-sm text-on-surface-variant max-w-3xl mt-1">
+          <p className="text-[13px] text-on-surface-variant max-w-2xl mt-1 leading-relaxed">
             Real-time encounter stream, diagnostic triage categories, and
             attending physician assignment across hospital facilities.
           </p>
