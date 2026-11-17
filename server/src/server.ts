@@ -3,6 +3,7 @@ import app from "./app.js";
 import { env } from "./config/env.js";
 import { connectDatabase, disconnectDatabase } from "./config/db.js";
 import { ensureAdminAccount } from "./services/auth.service.js";
+import { seedDataset } from "./utils/seeder.js";
 
 /**
  * Boots the HTTP server and establishes persistent database connectivity.
@@ -13,6 +14,9 @@ const startServer = async () => {
 
   // Ensure default administrator account is available
   await ensureAdminAccount();
+
+  // Auto-populate dataset if database has 0 doctors
+  await seedDataset(true);
 
   const server = createServer(app);
 

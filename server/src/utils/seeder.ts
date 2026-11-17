@@ -149,37 +149,47 @@ const conditions: PatientCondition[] = ["Critical", "Stable", "Under Observation
 const genders: PatientGender[] = ["male", "female", "other"];
 
 /**
- * Executes full database seed operations.
+ * Seeds dataset into MongoDB.
+ * If isAuto = true, only runs if collections are currently empty.
  */
-const seedDatabase = async () => {
+export const seedDataset = async (isAuto = false): Promise<void> => {
   try {
-    console.log("🌱 Starting Doctor Tracker database seeding...");
-    await connectDatabase();
+    if (isAuto) {
+      const count = await Doctor.countDocuments();
+      if (count > 0) {
+        return; // Already populated
+      }
+      console.log("🌱 Database is unpopulated. Auto-seeding initial clinical dataset...");
+    } else {
+      console.log("🌱 Starting Doctor Tracker database seeding...");
+      await connectDatabase();
+      console.log("🧹 Purging existing collections...");
+      await Promise.all([
+        User.deleteMany({}),
+        Doctor.deleteMany({}),
+        Patient.deleteMany({}),
+      ]);
+    }
 
-    // 1. Clean existing records
-    console.log("🧹 Purging existing collections...");
-    await Promise.all([
-      User.deleteMany({}),
-      Doctor.deleteMany({}),
-      Patient.deleteMany({}),
-    ]);
+    // 1. Seed Super Administrator
+    const adminEmail = (env.ADMIN_EMAIL || "admin@doctortracker.com").toLowerCase().trim();
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      await User.create({
+        name: env.ADMIN_NAME || "Super Administrator",
+        email: adminEmail,
+        password: env.ADMIN_PASSWORD || "Admin@123456",
+        role: "admin",
+      });
+      console.log(`   Admin Created: ${adminEmail}`);
+    }
 
-    // 2. Seed Super Administrator
-    console.log("👤 Creating default administrator account...");
-    const admin = await User.create({
-      name: env.ADMIN_NAME,
-      email: env.ADMIN_EMAIL,
-      password: env.ADMIN_PASSWORD,
-      role: "admin",
-    });
-    console.log(`   Admin Created: ${admin.email}`);
-
-    // 3. Seed Doctors
+    // 2. Seed Doctors
     console.log("🩺 Creating initial doctor profiles...");
     const createdDoctors = await Doctor.insertMany(doctorsData);
     console.log(`   Created ${createdDoctors.length} doctors.`);
 
-    // 4. Seed Patients with realistic distributions across doctors & dates
+    // 3. Seed Patients with realistic distributions across doctors & dates
     console.log("🏥 Generating realistic patient records...");
     const patientsToInsert = [];
     const totalPatientsToCreate = 65;
@@ -188,10 +198,9 @@ const seedDatabase = async () => {
       const assignedDoctor = createdDoctors[i % createdDoctors.length];
       const firstName = sampleFirstNames[Math.floor(Math.random() * sampleFirstNames.length)];
       const lastName = sampleLastNames[Math.floor(Math.random() * sampleLastNames.length)];
-      const age = Math.floor(Math.random() * 75) + 5; // Ages 5 to 80
+      const age = Math.floor(Math.random() * 75) + 5;
       const gender = genders[Math.floor(Math.random() * genders.length)];
       
-      // Condition weight: More Stable/Observing than Critical
       const randCondition = Math.random();
       let condition: PatientCondition = "Stable";
       if (randCondition < 0.15) condition = "Critical";
@@ -199,7 +208,6 @@ const seedDatabase = async () => {
       else if (randCondition < 0.75) condition = "Stable";
       else condition = "Recovered";
 
-      // Distribute admission dates across past 30 days
       const daysAgo = Math.floor(Math.random() * 30);
       const admissionDate = new Date();
       admissionDate.setDate(admissionDate.getDate() - daysAgo);
@@ -221,20 +229,20 @@ const seedDatabase = async () => {
 
     console.log("\n============================================");
     console.log("🎉 DATABASE SEEDING COMPLETED SUCCESSFULLY!");
-    console.log("============================================");
-    console.log(`🔑 Login Email:    ${env.ADMIN_EMAIL}`);
-    console.log(`🔑 Login Password: ${env.ADMIN_PASSWORD}`);
-    console.log(`🩺 Doctors:        ${createdDoctors.length}`);
-    console.log(`🏥 Patients:       ${createdPatients.length}`);
     console.log("============================================\n");
   } catch (error) {
-    console.error("❌ Database seeding failed:", error);
-    process.exit(1);
+    console.error("❌ Database seeding error:", error);
+    if (!isAuto) process.exit(1);
   } finally {
-    await disconnectDatabase();
-    process.exit(0);
+    if (!isAuto) {
+      await disconnectDatabase();
+      process.exit(0);
+    }
   }
 };
 
-// Execute if run directly
-seedDatabase();
+// If run directly from CLI (npm run seed)
+const isMain = process.argv[1]?.endsWith("seeder.ts") || process.argv[1]?.endsWith("seeder.js");
+if (isMain) {
+  seedDataset(false);
+}

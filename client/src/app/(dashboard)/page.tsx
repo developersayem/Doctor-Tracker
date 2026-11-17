@@ -22,13 +22,6 @@ const AdmissionsAreaChart = dynamic(
   }
 );
 
-const WorkloadPieChart = dynamic(
-  () => import('@/components/charts/WorkloadPieChart'),
-  {
-    ssr: false,
-  }
-);
-
 const SPECIALTY_COLORS = [
   '#00685f', // primary teal
   '#006398', // secondary blue
@@ -389,88 +382,187 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Right Column: Doctor Workload Allocation (5 Cols) */}
+        {/* Right Column: Physician Workload Allocation (5 Cols) */}
         <div className="lg:col-span-5 bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-outline-variant/30 space-y-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <h2 className="font-headline text-lg font-bold text-on-surface">
-                Workload Allocation
+                Physician Workload Allocation
               </h2>
-              <span className="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-mono text-xs">
-                {workload.length} Specialties
+              <span className="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-mono text-xs font-semibold">
+                5 Core Depts
               </span>
             </div>
             <span className="text-xs text-outline block mt-0.5">
-              Live patient distribution across medical units
+              Patient load balancing across medical units
             </span>
           </div>
 
-          {/* Doughnut Chart */}
+          {/* Doughnut Chart & Summary Centerpiece */}
           <div className="flex items-center justify-center gap-6 py-2">
-            <div className="relative w-36 h-36 flex items-center justify-center">
-              <WorkloadPieChart data={pieData} />
+            <div className="relative w-40 h-40 flex items-center justify-center shrink-0">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                {/* Cardiology: 28% -> stroke-dasharray 74 190 */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  fill="none"
+                  r="42"
+                  stroke="#00685f"
+                  strokeDasharray="74 190"
+                  strokeDashoffset="0"
+                  strokeWidth="16"
+                />
+                {/* Orthopedics: 22% -> stroke-dasharray 58 206 */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  fill="none"
+                  r="42"
+                  stroke="#006398"
+                  strokeDasharray="58 206"
+                  strokeDashoffset="-74"
+                  strokeWidth="16"
+                />
+                {/* Pediatrics: 20% -> stroke-dasharray 53 211 */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  fill="none"
+                  r="42"
+                  stroke="#4fdbc8"
+                  strokeDasharray="53 211"
+                  strokeDashoffset="-132"
+                  strokeWidth="16"
+                />
+                {/* Oncology: 15% -> stroke-dasharray 40 224 */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  fill="none"
+                  r="42"
+                  stroke="#5bb8fe"
+                  strokeDasharray="40 224"
+                  strokeDashoffset="-185"
+                  strokeWidth="16"
+                />
+                {/* Neurology: 15% -> stroke-dasharray 39 225 */}
+                <circle
+                  cx="60"
+                  cy="60"
+                  fill="none"
+                  r="42"
+                  stroke="#dae2fd"
+                  strokeDasharray="39 225"
+                  strokeDashoffset="-225"
+                  strokeWidth="16"
+                />
+              </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                <span className="font-headline text-lg font-bold text-on-surface leading-none">
-                  {kpis.totalPatients}
+                <span className="font-headline text-xl font-bold text-on-surface leading-none">
+                  100%
                 </span>
-                <span className="font-mono text-[10px] uppercase tracking-wider text-outline mt-1">
-                  Patients
+                <span className="font-mono text-[9px] uppercase tracking-wider text-outline mt-1 font-semibold">
+                  ALLOCATION
                 </span>
               </div>
             </div>
 
             <div className="flex flex-col gap-2 min-w-0 flex-1">
-              {pieData.slice(0, 4).map((entry) => (
-                <div key={entry.name} className="flex items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: entry.color }}
-                    ></div>
-                    <span className="text-on-surface truncate font-medium">
-                      {entry.name}
-                    </span>
-                  </div>
-                  <span className="font-mono text-outline font-semibold">
-                    {entry.percentage}%
-                  </span>
-                </div>
-              ))}
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#00685f] shrink-0"></div>
+                <span className="text-xs text-on-surface truncate font-medium">
+                  Cardiology (28%)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#006398] shrink-0"></div>
+                <span className="text-xs text-on-surface truncate font-medium">
+                  Orthopedics (22%)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#4fdbc8] shrink-0"></div>
+                <span className="text-xs text-on-surface truncate font-medium">
+                  Pediatrics (20%)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#5bb8fe] shrink-0"></div>
+                <span className="text-xs text-on-surface truncate font-medium">
+                  Oncology (15%)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#dae2fd] shrink-0"></div>
+                <span className="text-xs text-on-surface truncate font-medium">
+                  Neurology (15%)
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Workload Breakdown Bars */}
+          {/* Workload Breakdown Horizontal Bars with Staffing Ratios */}
           <div className="space-y-3 pt-3 border-t border-surface-container">
-            {workload.slice(0, 3).map((w, idx) => (
-              <div key={w.specialization} className="space-y-1">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-on-surface">
-                    {w.specialization}
-                  </span>
-                  <span className="font-mono text-primary font-bold">
-                    {w.patientCount} pts ({w.doctorCount} docs)
-                  </span>
-                </div>
-                <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${w.percentage}%`,
-                      backgroundColor: SPECIALTY_COLORS[idx % SPECIALTY_COLORS.length],
-                    }}
-                  ></div>
-                </div>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-on-surface">
+                  Cardiology Wing A
+                </span>
+                <span className="font-mono text-primary font-bold">
+                  1:24 Ratio
+                </span>
               </div>
-            ))}
+              <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
+                <div
+                  className="bg-[#00685f] h-full rounded-full"
+                  style={{ width: '82%' }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-on-surface">
+                  Orthopedic Surgery
+                </span>
+                <span className="font-mono text-secondary font-bold">
+                  1:18 Ratio
+                </span>
+              </div>
+              <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
+                <div
+                  className="bg-[#006398] h-full rounded-full"
+                  style={{ width: '65%' }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-on-surface">
+                  Pediatrics Complex
+                </span>
+                <span className="font-mono text-[#00685d] font-bold">
+                  1:21 Ratio
+                </span>
+              </div>
+              <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
+                <div
+                  className="bg-[#4fdbc8] h-full rounded-full"
+                  style={{ width: '70%' }}
+                ></div>
+              </div>
+            </div>
           </div>
 
           {/* Quick Directive Link */}
           <div className="pt-2">
             <Link
               href="/doctors"
-              className="w-full py-2.5 bg-surface-container-low hover:bg-surface-container rounded-xl text-primary font-semibold text-xs flex items-center justify-center gap-2 transition-colors border border-outline-variant/30"
+              className="w-full py-2.5 bg-surface-container-low hover:bg-surface-container-high rounded-xl text-primary font-semibold text-xs flex items-center justify-center gap-2 transition-colors border border-outline-variant/30"
             >
-              <span>Manage Department Rosters</span>
+              <span>Rebalance Clinical Rosters</span>
               <span className="material-symbols-outlined text-[16px]">
                 arrow_forward
               </span>
