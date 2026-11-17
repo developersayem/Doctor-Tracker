@@ -3,7 +3,6 @@ import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import QueryProvider from '@/providers/QueryProvider';
 import { AuthProvider } from '@/context/AuthContext';
-import { ThemeProvider } from '@/context/ThemeContext';
 import { Toaster } from 'sonner';
 
 const inter = Inter({
@@ -44,14 +43,12 @@ export default function RootLayout({
         className="bg-surface text-on-surface min-h-screen font-sans antialiased"
         suppressHydrationWarning
       >
-        <ThemeProvider>
-          <QueryProvider>
-            <AuthProvider>
-              {children}
-              <Toaster position="top-right" richColors closeButton />
-            </AuthProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <AuthProvider>
+            {children}
+            <Toaster position="top-right" richColors closeButton />
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
