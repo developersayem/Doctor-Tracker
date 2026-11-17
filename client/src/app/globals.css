@@ -1,0 +1,87 @@
+/* Material Symbols font is loaded via <link> in layout.tsx for reliable SSR delivery. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', system-ui, sans-serif;
+    --font-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+    --color-surface: #faf8ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f2f3ff;
+    --color-surface-container: #eaedff;
+    --color-surface-container-high: #e2e7ff;
+    --color-surface-container-highest: #dae2fd;
+    --color-on-surface: #131b2e;
+    --color-on-surface-variant: #3d4947;
+    --color-outline: #6d7a77;
+    --color-outline-variant: #bcc9c6;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-inter);
+    background-color: #faf8ff;
+    color: #131b2e;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Page header h1 — refined display type */
+  .page-heading {
+    font-family: var(--font-jakarta);
+    font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    color: #131b2e;
+  }
+
+  /* Eyebrow label above headings */
+  .eyebrow-label {
+    font-family: var(--font-inter);
+    font-size: 0.6875rem;      /* 11px */
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+/* Custom scrollbar for modern dashboard feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #bcc9c6;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6d7a77;
+}
