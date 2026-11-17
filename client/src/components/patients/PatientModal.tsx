@@ -158,7 +158,7 @@ export default function PatientModal({
     setIsSubmitting(true);
     try {
       if (isEdit && patient) {
-        await apiClient.put<ApiResponse<Patient>>(`/patients/${patient._id}`, formData);
+        await apiClient.patch<ApiResponse<Patient>>(`/patients/${patient._id}`, formData);
         toast.success(`Patient record for ${formData.name} updated successfully`);
       } else {
         await apiClient.post<ApiResponse<Patient>>('/patients', formData);

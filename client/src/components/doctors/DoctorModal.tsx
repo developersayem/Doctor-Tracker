@@ -129,7 +129,7 @@ export default function DoctorModal({
         phone: formData.contactNumber,
       };
       if (isEdit && doctor) {
-        await apiClient.put<ApiResponse<Doctor>>(`/doctors/${doctor._id}`, payload);
+        await apiClient.patch<ApiResponse<Doctor>>(`/doctors/${doctor._id}`, payload);
         toast.success(`Physician record for ${formData.name} updated successfully`);
       } else {
         await apiClient.post<ApiResponse<Doctor>>('/doctors', payload);
