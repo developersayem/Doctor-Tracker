@@ -13,6 +13,9 @@ const doctorsData = [
     phone: "+1-555-0101",
     email: "sarah.jenkins@cityhospital.org",
     status: "active" as const,
+    yearsOfExperience: 14,
+    maxCapacity: 25,
+    bio: "Senior Interventional Cardiologist specializing in acute coronary syndrome and structural heart diseases.",
   },
   {
     name: "Dr. Marcus Chen",
@@ -21,6 +24,9 @@ const doctorsData = [
     phone: "+1-555-0102",
     email: "marcus.chen@centralmed.org",
     status: "active" as const,
+    yearsOfExperience: 11,
+    maxCapacity: 20,
+    bio: "Board-certified Neurologist focusing on neurodegenerative disorders, stroke rehabilitation, and epilepsy management.",
   },
   {
     name: "Dr. Elena Rostova",
@@ -29,6 +35,9 @@ const doctorsData = [
     phone: "+1-555-0103",
     email: "elena.rostova@metrohealth.org",
     status: "active" as const,
+    yearsOfExperience: 8,
+    maxCapacity: 30,
+    bio: "Pediatric specialist with extensive experience in neonatal intensive care and developmental pediatrics.",
   },
   {
     name: "Dr. David Kim",
@@ -37,6 +46,9 @@ const doctorsData = [
     phone: "+1-555-0104",
     email: "david.kim@memorialhealth.org",
     status: "active" as const,
+    yearsOfExperience: 16,
+    maxCapacity: 22,
+    bio: "Orthopedic surgeon specializing in joint replacement, sports injury trauma, and arthroscopic reconstructions.",
   },
   {
     name: "Dr. Aisha Patel",
@@ -45,6 +57,9 @@ const doctorsData = [
     phone: "+1-555-0105",
     email: "aisha.patel@cityhospital.org",
     status: "active" as const,
+    yearsOfExperience: 12,
+    maxCapacity: 18,
+    bio: "Clinical oncologist leading precision chemotherapy protocols and multidisciplinary cancer therapy boards.",
   },
   {
     name: "Dr. Robert Torres",
@@ -53,6 +68,9 @@ const doctorsData = [
     phone: "+1-555-0106",
     email: "robert.torres@centralmed.org",
     status: "active" as const,
+    yearsOfExperience: 7,
+    maxCapacity: 28,
+    bio: "Dermatologist with clinical focus on immunological skin disorders, dermatopathology, and laser skin treatments.",
   },
   {
     name: "Dr. James Wilson",
@@ -61,6 +79,9 @@ const doctorsData = [
     phone: "+1-555-0107",
     email: "james.wilson@metrohealth.org",
     status: "active" as const,
+    yearsOfExperience: 19,
+    maxCapacity: 15,
+    bio: "Chief of Surgery specializing in advanced minimally invasive laparoscopy and emergency trauma surgeries.",
   },
   {
     name: "Dr. Emily Watson",
@@ -69,6 +90,9 @@ const doctorsData = [
     phone: "+1-555-0108",
     email: "emily.watson@memorialhealth.org",
     status: "active" as const,
+    yearsOfExperience: 9,
+    maxCapacity: 20,
+    bio: "Nephrologist dedicated to chronic kidney disease management, hemodialysis care, and renal transplantation.",
   },
   {
     name: "Dr. Tariq Al-Mansoor",
@@ -77,6 +101,9 @@ const doctorsData = [
     phone: "+1-555-0109",
     email: "tariq.almansoor@cityhospital.org",
     status: "active" as const,
+    yearsOfExperience: 15,
+    maxCapacity: 24,
+    bio: "Consultant endocrinologist with focus on diabetic neuropathy, metabolic syndrome, and thyroid disorders.",
   },
   {
     name: "Dr. Laura Schmidt",
@@ -85,6 +112,9 @@ const doctorsData = [
     phone: "+1-555-0110",
     email: "laura.schmidt@centralmed.org",
     status: "active" as const,
+    yearsOfExperience: 6,
+    maxCapacity: 22,
+    bio: "Pulmonary critical care specialist managing acute respiratory distress, asthma, and sleep medicine.",
   },
   {
     name: "Dr. Benjamin Vance",
@@ -93,6 +123,9 @@ const doctorsData = [
     phone: "+1-555-0111",
     email: "benjamin.vance@metrohealth.org",
     status: "on-leave" as const,
+    yearsOfExperience: 10,
+    maxCapacity: 20,
+    bio: "Adult psychiatrist providing psychotherapy, mood stabilization, and holistic psychiatric rehabilitation.",
   },
   {
     name: "Dr. Maria Santos",
@@ -101,6 +134,9 @@ const doctorsData = [
     phone: "+1-555-0112",
     email: "maria.santos@memorialhealth.org",
     status: "active" as const,
+    yearsOfExperience: 13,
+    maxCapacity: 26,
+    bio: "OB/GYN specializing in high-risk maternal-fetal medicine, prenatal health, and gynecological surgery.",
   },
   {
     name: "Dr. Jonathan Hayes",
@@ -109,6 +145,9 @@ const doctorsData = [
     phone: "+1-555-0113",
     email: "jonathan.hayes@cityhospital.org",
     status: "active" as const,
+    yearsOfExperience: 18,
+    maxCapacity: 20,
+    bio: "Gastroenterologist and therapeutic endoscopist specializing in inflammatory bowel disease (IBD) and hepatology.",
   },
   {
     name: "Dr. Rachel Adams",
@@ -117,6 +156,9 @@ const doctorsData = [
     phone: "+1-555-0114",
     email: "rachel.adams@centralmed.org",
     status: "active" as const,
+    yearsOfExperience: 5,
+    maxCapacity: 22,
+    bio: "Hematologist focused on coagulopathy, bone marrow transplants, and chronic anemia syndromes.",
   },
   {
     name: "Dr. Kevin Patel",
@@ -125,6 +167,9 @@ const doctorsData = [
     phone: "+1-555-0115",
     email: "kevin.patel@metrohealth.org",
     status: "active" as const,
+    yearsOfExperience: 22,
+    maxCapacity: 30,
+    bio: "Senior Ophthalmic Surgeon with over two decades of experience in cataract microsurgery and retinal laser procedures.",
   },
 ];
 

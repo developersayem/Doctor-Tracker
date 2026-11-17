@@ -175,14 +175,14 @@ export default function DoctorDetailPage() {
                 <span className="material-symbols-outlined text-[16px] text-outline">
                   medical_services
                 </span>
-                {doctor.yearsOfExperience || 5} Years Experience
+                {doctor.yearsOfExperience !== undefined ? `${doctor.yearsOfExperience} Years Experience` : '5 Years Experience'}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-outline pt-1">
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">call</span>
-                {doctor.contactNumber}
+                {doctor.contactNumber || (doctor as unknown as { phone?: string }).phone}
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">mail</span>

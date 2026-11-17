@@ -3,10 +3,13 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IDoctor extends Document {
   name: string;
   specialization: string;
-  hospital: string;
+  hospital?: string;
   phone: string;
   email: string;
   status: "active" | "on-leave";
+  yearsOfExperience: number;
+  maxCapacity: number;
+  bio?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +56,23 @@ const doctorSchema = new Schema<IDoctor>(
       default: "active",
       index: true,
     },
+    yearsOfExperience: {
+      type: Number,
+      min: [0, "Years of experience cannot be negative"],
+      max: [70, "Years of experience cannot exceed 70"],
+      default: 5,
+    },
+    maxCapacity: {
+      type: Number,
+      min: [1, "Max capacity must be at least 1"],
+      max: [100, "Max capacity cannot exceed 100"],
+      default: 20,
+    },
+    bio: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
   {
     timestamps: true,
@@ -60,6 +80,11 @@ const doctorSchema = new Schema<IDoctor>(
     toObject: { virtuals: true },
   }
 );
+
+// Virtual field for contactNumber alias to ensure backward/frontend compatibility
+doctorSchema.virtual("contactNumber").get(function () {
+  return this.phone;
+});
 
 // Virtual field to link assigned patients without duplicating data
 doctorSchema.virtual("patients", {

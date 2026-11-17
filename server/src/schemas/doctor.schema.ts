@@ -28,16 +28,26 @@ export const createDoctorSchema = z.object({
     .trim()
     .optional(),
   phone: z
-    .string({ required_error: "Phone number is required" })
+    .string()
     .min(7, "Phone number is too short")
     .max(20, "Phone number is too long")
-    .trim(),
+    .trim()
+    .optional(),
+  contactNumber: z
+    .string()
+    .min(7, "Contact number is too short")
+    .max(20, "Contact number is too long")
+    .trim()
+    .optional(),
   email: z
     .string({ required_error: "Email is required" })
     .email("Please provide a valid email address")
     .trim()
     .toLowerCase(),
   status: z.preprocess(normalizeDoctorStatus, z.enum(["active", "on-leave"])).default("active"),
+  yearsOfExperience: z.coerce.number().int().min(0, "Experience cannot be negative").max(70, "Experience cannot exceed 70").optional(),
+  maxCapacity: z.coerce.number().int().min(1, "Capacity must be at least 1").max(100, "Capacity cannot exceed 100").optional(),
+  bio: z.string().trim().optional(),
 });
 
 /**

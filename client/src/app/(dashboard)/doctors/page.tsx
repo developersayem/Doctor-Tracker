@@ -261,7 +261,7 @@ export default function DoctorsPage() {
                               {doc.name}
                             </Link>
                             <span className="font-mono text-[11px] text-outline">
-                              {doc.yearsOfExperience || 5} yrs experience
+                              {doc.yearsOfExperience !== undefined ? `${doc.yearsOfExperience} yrs experience` : '5 yrs experience'}
                             </span>
                           </div>
                         </div>
@@ -304,7 +304,7 @@ export default function DoctorsPage() {
                       </td>
 
                       <td className="py-3.5 px-4 font-mono text-xs text-outline">
-                        <div>{doc.contactNumber}</div>
+                        <div>{doc.contactNumber || (doc as unknown as { phone?: string }).phone}</div>
                         <div className="text-[11px] text-outline/80">{doc.email}</div>
                       </td>
 

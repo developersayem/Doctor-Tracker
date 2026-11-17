@@ -86,7 +86,15 @@ export const createDoctor = async (data: CreateDoctorInput) => {
     throw ApiError.conflict(`A doctor with email '${data.email}' already exists.`);
   }
 
-  const doctor = await Doctor.create(data);
+  const payload: Record<string, unknown> = { ...data };
+  if (!payload.phone && data.contactNumber) {
+    payload.phone = data.contactNumber;
+  }
+  if (!payload.phone) {
+    payload.phone = "+1-555-0100";
+  }
+
+  const doctor = await Doctor.create(payload);
   return doctor;
 };
 
@@ -108,7 +116,12 @@ export const updateDoctor = async (doctorId: string, data: UpdateDoctorInput) =>
     }
   }
 
-  const updatedDoctor = await Doctor.findByIdAndUpdate(doctorId, data, {
+  const updateData: Record<string, unknown> = { ...data };
+  if (!updateData.phone && data.contactNumber) {
+    updateData.phone = data.contactNumber;
+  }
+
+  const updatedDoctor = await Doctor.findByIdAndUpdate(doctorId, updateData, {
     new: true,
     runValidators: true,
   });

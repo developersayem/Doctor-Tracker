@@ -74,11 +74,11 @@ export default function DoctorModal({
       setFormData({
         name: doctor.name || '',
         specialization: doctor.specialization || 'Cardiology',
-        contactNumber: doctor.contactNumber || '',
+        contactNumber: doctor.contactNumber || (doctor as unknown as { phone?: string }).phone || '',
         email: doctor.email || '',
         status: doctor.status || 'active',
         maxCapacity: doctor.maxCapacity || 20,
-        yearsOfExperience: doctor.yearsOfExperience || 5,
+        yearsOfExperience: doctor.yearsOfExperience ?? 5,
         bio: doctor.bio || '',
       });
     } else {
@@ -101,11 +101,15 @@ export default function DoctorModal({
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const payload = {
+        ...formData,
+        phone: formData.contactNumber,
+      };
       if (isEdit && doctor) {
-        await apiClient.put<ApiResponse<Doctor>>(`/doctors/${doctor._id}`, formData);
+        await apiClient.put<ApiResponse<Doctor>>(`/doctors/${doctor._id}`, payload);
         toast.success(`Physician record for ${formData.name} updated successfully`);
       } else {
-        await apiClient.post<ApiResponse<Doctor>>('/doctors', formData);
+        await apiClient.post<ApiResponse<Doctor>>('/doctors', payload);
         toast.success(`Physician ${formData.name} registered to medical directory`);
       }
       onSuccess();

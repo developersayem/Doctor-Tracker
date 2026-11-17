@@ -12,6 +12,7 @@ export interface Doctor {
   name: string;
   specialization: string;
   contactNumber: string;
+  phone?: string;
   email: string;
   hospital?: string;
   status: 'active' | 'on-leave';
