@@ -6,6 +6,7 @@ import apiClient from '@/lib/axios';
 import { Patient, Doctor, ApiResponse } from '@/types';
 import { toast } from 'sonner';
 import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
+import CustomDatePicker from '@/components/ui/CustomDatePicker';
 
 interface PatientModalProps {
   isOpen: boolean;
@@ -301,16 +302,13 @@ export default function PatientModal({
 
           {/* Admission Date */}
           <div>
-            <label className="block text-xs font-semibold text-on-surface mb-1">
-              Admission Date
-            </label>
-            <input
-              type="date"
+            <CustomDatePicker
+              label="Admission Date"
               value={formData.admissionDate}
-              onChange={(e) =>
-                setFormData({ ...formData, admissionDate: e.target.value })
+              onChange={(val) =>
+                setFormData({ ...formData, admissionDate: val })
               }
-              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              placeholder="Select admission date..."
             />
           </div>
 
