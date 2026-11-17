@@ -10,6 +10,7 @@ import {
   formatDate,
   getConditionBadgeClass,
   getDoctorStatusBadgeClass,
+  formatDoctorStatus,
 } from '@/lib/utils';
 import DoctorModal from '@/components/doctors/DoctorModal';
 import PatientModal from '@/components/patients/PatientModal';
@@ -162,7 +163,7 @@ export default function DoctorDetailPage() {
                 <span
                   className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`}
                 ></span>
-                <span>{doctor.status}</span>
+                <span>{formatDoctorStatus(doctor.status)}</span>
               </span>
             </div>
 
@@ -305,7 +306,7 @@ export default function DoctorDetailPage() {
               Clinical Roster
             </span>
             <div className="font-headline text-2xl font-bold text-primary mt-1">
-              {doctor.status === 'Active' ? 'Available' : 'Restricted'}
+              {doctor.status === 'active' ? 'Available' : 'Restricted'}
             </div>
             <span className="text-[11px] text-outline mt-1 block">
               Verified License

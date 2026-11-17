@@ -166,8 +166,8 @@ export default function PatientModal({
     label: d.name,
     description: `${d.specialization} • ${d.hospital.split(' - ')[0]}`,
     icon: 'stethoscope',
-    badge: d.status === 'Active' ? 'On Duty' : d.status,
-    statusDot: d.status === 'Active' ? 'active' : 'leave',
+    badge: d.status === 'active' ? 'On Duty' : d.status,
+    statusDot: d.status === 'active' ? 'active' : 'leave',
   }));
 
   return createPortal(

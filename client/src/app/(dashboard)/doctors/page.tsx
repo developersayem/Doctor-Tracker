@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 import { Doctor, ApiResponse, PaginationMeta } from '@/types';
-import { getDoctorStatusBadgeClass } from '@/lib/utils';
+import { getDoctorStatusBadgeClass, formatDoctorStatus } from '@/lib/utils';
 import DoctorModal from '@/components/doctors/DoctorModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
@@ -285,7 +285,7 @@ export default function DoctorsPage() {
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`}
                           ></span>
-                          <span>{doc.status}</span>
+                          <span>{formatDoctorStatus(doc.status)}</span>
                         </span>
                       </td>
 

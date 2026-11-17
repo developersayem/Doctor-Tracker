@@ -2,10 +2,12 @@ import { z } from "zod";
 
 export const normalizeDoctorStatus = (val: unknown): unknown => {
   if (typeof val !== "string") return val;
-  const clean = val.toLowerCase().replace(/[\s_]/g, "-").trim();
+  const trimmed = val.trim();
+  if (trimmed === "") return undefined; // empty string → omit filter
+  const clean = trimmed.toLowerCase().replace(/[\s_]/g, "-");
   if (clean === "active") return "active";
   if (clean === "on-leave" || clean === "leave" || clean === "inactive") return "on-leave";
-  return val;
+  return trimmed;
 };
 
 /**
@@ -61,7 +63,7 @@ export const doctorQuerySchema = z.object({
   search: z.string().optional(),
   specialization: z.string().optional(),
   hospital: z.string().optional(),
-  status: z.preprocess(normalizeDoctorStatus, z.enum(["active", "on-leave"])).optional(),
+  status: z.preprocess(normalizeDoctorStatus, z.enum(["active", "on-leave"]).optional()),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   sortBy: z.enum(["name", "specialization", "hospital", "createdAt", "status"]).optional(),

@@ -14,7 +14,7 @@ export interface Doctor {
   contactNumber: string;
   email: string;
   hospital: string;
-  status: 'Active' | 'On Leave' | 'Inactive';
+  status: 'active' | 'on-leave';
   patientCount?: number;
   maxCapacity: number;
   bio?: string;

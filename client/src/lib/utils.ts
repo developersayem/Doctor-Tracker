@@ -66,25 +66,33 @@ export function getConditionBadgeClass(condition: string): { bg: string; text: s
 }
 
 export function getDoctorStatusBadgeClass(status: string): { bg: string; text: string; dot: string } {
-  switch (status) {
-    case 'Active':
-      return {
-        bg: 'bg-primary/10 text-primary border border-primary/20',
-        text: 'text-primary font-semibold',
-        dot: 'bg-primary',
-      };
-    case 'On Leave':
-      return {
-        bg: 'bg-amber-50 text-amber-700 border border-amber-200',
-        text: 'text-amber-700 font-semibold',
-        dot: 'bg-amber-500',
-      };
-    case 'Inactive':
-    default:
-      return {
-        bg: 'bg-surface-container text-outline border border-outline-variant/40',
-        text: 'text-outline font-semibold',
-        dot: 'bg-outline',
-      };
+  const s = (status || '').toLowerCase().trim();
+  if (s === 'active') {
+    return {
+      bg: 'bg-primary/10 text-primary border border-primary/20',
+      text: 'text-primary font-semibold',
+      dot: 'bg-primary',
+    };
   }
+  if (s === 'on-leave' || s === 'on leave') {
+    return {
+      bg: 'bg-amber-50 text-amber-700 border border-amber-200',
+      text: 'text-amber-700 font-semibold',
+      dot: 'bg-amber-500',
+    };
+  }
+  // inactive / unknown
+  return {
+    bg: 'bg-surface-container text-outline border border-outline-variant/40',
+    text: 'text-outline font-semibold',
+    dot: 'bg-outline',
+  };
+}
+
+/** Returns a human-readable label for a doctor status value from the DB. */
+export function formatDoctorStatus(status: string): string {
+  const s = (status || '').toLowerCase().trim();
+  if (s === 'active') return 'Active';
+  if (s === 'on-leave' || s === 'on leave') return 'On Leave';
+  return status || 'Unknown';
 }

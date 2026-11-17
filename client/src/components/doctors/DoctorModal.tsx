@@ -36,9 +36,8 @@ const HOSPITAL_OPTIONS: SelectOption[] = [
 ];
 
 const STATUS_OPTIONS: SelectOption[] = [
-  { value: 'Active', label: 'Active', statusDot: 'active', description: 'On Duty • Receiving Patients' },
-  { value: 'On Leave', label: 'On Leave', statusDot: 'leave', description: 'Temporary Absence' },
-  { value: 'Inactive', label: 'Inactive', statusDot: 'inactive', description: 'Off Roster / Archived' },
+  { value: 'active', label: 'Active', statusDot: 'active', description: 'On Duty • Receiving Patients' },
+  { value: 'on-leave', label: 'On Leave', statusDot: 'leave', description: 'Temporary Absence' },
 ];
 
 export default function DoctorModal({
@@ -56,7 +55,7 @@ export default function DoctorModal({
     contactNumber: '',
     email: '',
     hospital: 'Metro General Hospital - Central',
-    status: 'Active' as 'Active' | 'On Leave' | 'Inactive',
+    status: 'active' as 'active' | 'on-leave',
     maxCapacity: 20,
     yearsOfExperience: 5,
     bio: '',
@@ -87,7 +86,7 @@ export default function DoctorModal({
         contactNumber: doctor.contactNumber || '',
         email: doctor.email || '',
         hospital: doctor.hospital || 'Metro General Hospital - Central',
-        status: doctor.status || 'Active',
+        status: doctor.status || 'active',
         maxCapacity: doctor.maxCapacity || 20,
         yearsOfExperience: doctor.yearsOfExperience || 5,
         bio: doctor.bio || '',
@@ -99,7 +98,7 @@ export default function DoctorModal({
         contactNumber: '',
         email: '',
         hospital: 'Metro General Hospital - Central',
-        status: 'Active',
+        status: 'active',
         maxCapacity: 20,
         yearsOfExperience: 5,
         bio: '',
@@ -247,7 +246,7 @@ export default function DoctorModal({
               onChange={(val) =>
                 setFormData({
                   ...formData,
-                  status: val as 'Active' | 'On Leave' | 'Inactive',
+                  status: val as 'active' | 'on-leave',
                 })
               }
               placeholder="Select status..."
