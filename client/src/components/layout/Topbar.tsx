@@ -48,7 +48,7 @@ export default function Topbar({
       <div className="flex items-center gap-space-md">
         {/* Quick link to API Docs */}
         <a
-          href="http://localhost:5000/api-docs"
+          href="http://localhost:5001/api-docs"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-outline hover:text-primary hover:bg-surface-container transition-colors"

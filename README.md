@@ -5,7 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-brightgreen.svg)](https://mongoosejs.com/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v3.4-38bdf8.svg)](https://tailwindcss.com/)
-[![Swagger](https://img.shields.io/badge/OpenAPI-3.0.3-85ea2d.svg)](http://localhost:5000/api-docs)
+[![Swagger](https://img.shields.io/badge/OpenAPI-3.0.3-85ea2d.svg)](http://localhost:5001/api-docs)
 [![Vitest](https://img.shields.io/badge/Tests-38%20Passing-success.svg)](https://vitest.dev/)
 
 **Doctor Tracker** is an enterprise-grade administrative healthcare portal engineered for hospital clinical directors and supervisors to manage physician staffing rosters, oversee patient admissions, and track facility-wide operational throughput in real time.
@@ -68,7 +68,7 @@ doctor-tracker/
 - **Full Intake Workflow:** Modal dialogs with age, gender, contact, diagnostic condition, and treatment notes.
 
 ### 4. Interactive OpenAPI / Swagger Documentation
-- Fully documented OpenAPI 3.0.3 specification mounted at `http://localhost:5000/api-docs` and `http://localhost:5000/docs`.
+- Fully documented OpenAPI 3.0.3 specification mounted at `http://localhost:5001/api-docs` and `http://localhost:5001/docs`.
 - Includes schemas, authentication parameters, request bodies, and sample responses.
 
 ---
@@ -127,8 +127,8 @@ npm run seed
 npm run dev
 ```
 
-Backend will be active at: `http://localhost:5000`  
-Interactive Swagger Docs: `http://localhost:5000/api-docs`
+Backend will be active at: `http://localhost:5001`  
+Interactive Swagger Docs: `http://localhost:5001/api-docs`
 
 ---
 

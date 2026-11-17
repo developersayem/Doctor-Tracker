@@ -10,7 +10,7 @@ dotenv.config();
  */
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  PORT: z.coerce.number().default(5000),
+  PORT: z.coerce.number().default(5001),
   MONGO_URI: z
     .string()
     .min(1, "MongoDB connection URI is required")
