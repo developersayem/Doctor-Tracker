@@ -11,8 +11,18 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.coerce.number().default(5000),
-  MONGO_URI: z.string().min(1, "MongoDB connection URI is required"),
-  JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters long for cryptographic security"),
+  MONGO_URI: z
+    .string()
+    .min(1, "MongoDB connection URI is required")
+    .default(
+      process.env.NODE_ENV === "test"
+        ? "mongodb://127.0.0.1:27017/doctor_tracker_test"
+        : "mongodb://127.0.0.1:27017/doctor_tracker"
+    ),
+  JWT_SECRET: z
+    .string()
+    .min(32, "JWT_SECRET must be at least 32 characters long for cryptographic security")
+    .default("default_development_jwt_secret_must_be_over_32_characters_long"),
   JWT_EXPIRES_IN: z.string().default("7d"),
   CLIENT_URL: z.string().url("CLIENT_URL must be a valid URL").default("http://localhost:3000"),
   ADMIN_NAME: z.string().default("Super Administrator"),
