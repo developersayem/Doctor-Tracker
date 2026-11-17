@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
 
+import apiRouter from "./routes/index.js";
+
 const app: Application = express();
 
 // 1. Security HTTP Headers
@@ -50,8 +52,8 @@ app.get("/api/health", (_req: Request, res: Response) => {
   });
 });
 
-// 6. Mount API v1 router placeholder (will be replaced by full router in next commits)
-// app.use("/api/v1", apiRouter);
+// 6. Mount REST API v1 routes
+app.use("/api/v1", apiRouter);
 
 // 7. Error Handling Pipeline
 app.use(notFoundHandler);
