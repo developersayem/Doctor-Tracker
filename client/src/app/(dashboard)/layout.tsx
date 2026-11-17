@@ -30,10 +30,7 @@ export default function DashboardLayout({
   if (isLoading) {
     return (
       <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-3">
-        <div className="w-10 h-10 border-3 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        <span className="font-mono text-xs uppercase tracking-wider text-outline font-semibold">
-          Validating Clinical Credential Matrix...
-        </span>
+        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
       </div>
     );
   }

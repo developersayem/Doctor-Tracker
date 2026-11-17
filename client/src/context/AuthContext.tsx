@@ -23,33 +23,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    // Synchronously/optimistically restore credentials from localStorage (0ms load time)
+    try {
       const storedToken = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
 
-      if (storedToken && storedUser) {
-        try {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
-
-          // Verify with backend
-          const res = await apiClient.get<ApiResponse<User>>('/auth/me');
-          if (res.data?.data) {
-            setUser(res.data.data);
-            localStorage.setItem('user', JSON.stringify(res.data.data));
+      if (storedToken) {
+        setToken(storedToken);
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser));
+          } catch {
+            // Corrupt JSON in storage, will be refreshed below
           }
-        } catch {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setToken(null);
-          setUser(null);
         }
-      }
-      setIsLoading(false);
-    };
 
-    initializeAuth();
-  }, []);
+        // Unblock UI immediately so pages render without waiting for network requests
+        setIsLoading(false);
+
+        // Background non-blocking session revalidation
+        apiClient
+          .get<ApiResponse<User>>('/auth/me')
+          .then((res) => {
+            if (res.data?.data) {
+              setUser(res.data.data);
+              localStorage.setItem('user', JSON.stringify(res.data.data));
+            }
+          })
+          .catch((err) => {
+            // Only if token is explicitly expired/unauthorized do we invalidate
+            if (err.response?.status === 401) {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              setToken(null);
+              setUser(null);
+              router.push('/login');
+            }
+          });
+        return;
+      }
+    } catch (err) {
+      console.error('Auth initialization error:', err);
+    }
+
+    setIsLoading(false);
+  }, [router]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
