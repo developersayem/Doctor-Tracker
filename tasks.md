@@ -15,6 +15,7 @@ This document tracks all implementation phases and provides a **Human-like Git C
 - [x] Phase 6: Patient Management REST API & Relational Association
 - [x] Phase 7: Analytics Engine ($facet Aggregation Pipeline) & Data Seeder
 - [x] Phase 7.5: Production-Grade Backend Test Suite (Vitest, In-Memory Mongo & Supertest)
+- [x] Phase 7.6: Interactive Swagger / OpenAPI 3.0 Documentation (/api-docs & /docs)
 - [ ] Phase 8: Frontend (Next.js 15) Monorepo Initialization & Setup
 - [ ] Phase 9: Client Core Infrastructure (Axios, Auth State, Layout Shell)
 - [ ] Phase 10: Doctor Management UI (Directory, Search, Modals, Details Page)
@@ -89,6 +90,13 @@ This document tracks all implementation phases and provides a **Human-like Git C
 - [x] Write Integration tests for Doctor management (CRUD, duplicate email rejection, search filtering, patient count aggregation).
 - [x] Write Integration tests for Patient management (CRUD, doctor existence validation, condition filtering, cascade handling).
 - [x] Write Integration tests for Analytics `$facet` aggregation pipeline (KPI counts, ratio, workloads, trends).
+
+### Phase 7.6: Interactive Swagger / OpenAPI 3.0 Documentation
+- [x] Configure OpenAPI 3.0.3 specification with tags, schemas, and dual authentication (`bearerAuth` & `cookieAuth`).
+- [x] Integrate Swagger UI middleware at `/api-docs` and `/docs` with interactive execution.
+- [x] Expose raw OpenAPI specification JSON at `/api-docs.json` and `/docs/swagger.json`.
+- [x] Configure Helmet CSP to ensure seamless Swagger asset rendering without policy violations.
+- [x] Implement integration tests for Swagger UI and JSON documentation endpoints.
 
 ### Phase 8: Frontend (Next.js 15) Monorepo Setup
 - [ ] Initialize Next.js 15 App Router app in `client/` directory with TypeScript and Tailwind CSS.
