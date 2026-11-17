@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom';
 import apiClient from '@/lib/axios';
 import { Patient, Doctor, ApiResponse } from '@/types';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { validatePhone } from '@/lib/validation';
 import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 import CustomDatePicker from '@/components/ui/CustomDatePicker';
 
@@ -59,6 +61,8 @@ export default function PatientModal({
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [phoneTouched, setPhoneTouched] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -67,6 +71,8 @@ export default function PatientModal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      setPhoneError(null);
+      setPhoneTouched(false);
     } else {
       document.body.style.overflow = '';
     }
@@ -138,6 +144,14 @@ export default function PatientModal({
     e.preventDefault();
     if (!formData.doctorId) {
       toast.error('Please assign an attending physician to the patient');
+      return;
+    }
+
+    const phoneErr = validatePhone(formData.contactNumber);
+    if (phoneErr) {
+      setPhoneError(phoneErr);
+      setPhoneTouched(true);
+      toast.error(phoneErr);
       return;
     }
 
@@ -262,15 +276,41 @@ export default function PatientModal({
                 Contact Phone <span className="text-rose-500">*</span>
               </label>
               <input
-                type="text"
+                type="tel"
                 required
                 value={formData.contactNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, contactNumber: e.target.value })
-                }
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[a-zA-Z]/g, '');
+                  setFormData({ ...formData, contactNumber: val });
+                  if (phoneTouched || val.length > 0) {
+                    setPhoneError(validatePhone(val));
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key.length === 1 && /[a-zA-Z]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    setPhoneError('Phone number cannot contain letters, only numbers are allowed');
+                    setPhoneTouched(true);
+                  }
+                }}
+                onBlur={() => {
+                  setPhoneTouched(true);
+                  setPhoneError(validatePhone(formData.contactNumber));
+                }}
                 placeholder="+1-555-0182"
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className={cn(
+                  "w-full h-10 px-3 bg-surface-container-lowest border rounded-lg text-sm text-on-surface focus:outline-none transition-all",
+                  phoneError && phoneTouched
+                    ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                    : "border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                )}
               />
+              {phoneError && phoneTouched && (
+                <p className="mt-1 text-[11px] text-rose-500 flex items-center gap-1 font-medium">
+                  <span className="material-symbols-outlined text-[13px]">error</span>
+                  {phoneError}
+                </p>
+              )}
             </div>
           </div>
 

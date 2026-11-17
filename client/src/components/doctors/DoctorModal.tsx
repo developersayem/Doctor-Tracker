@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom';
 import apiClient from '@/lib/axios';
 import { Doctor, ApiResponse } from '@/types';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { validateEmail, validatePhone } from '@/lib/validation';
 import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 
 interface DoctorModalProps {
@@ -52,6 +54,8 @@ export default function DoctorModal({
     bio: '',
   });
 
+  const [errors, setErrors] = useState<{ email?: string | null; contactNumber?: string | null }>({});
+  const [touched, setTouched] = useState<{ email?: boolean; contactNumber?: boolean }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -61,6 +65,8 @@ export default function DoctorModal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      setErrors({});
+      setTouched({});
     } else {
       document.body.style.overflow = '';
     }
@@ -99,6 +105,23 @@ export default function DoctorModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const emailErr = validateEmail(formData.email);
+    const phoneErr = validatePhone(formData.contactNumber);
+
+    if (emailErr || phoneErr) {
+      setErrors({
+        email: emailErr,
+        contactNumber: phoneErr,
+      });
+      setTouched({
+        email: true,
+        contactNumber: true,
+      });
+      toast.error(emailErr || phoneErr || 'Please provide valid email and phone number');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
@@ -196,10 +219,31 @@ export default function DoctorModal({
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setFormData({ ...formData, email: val });
+                  if (touched.email) {
+                    setErrors((prev) => ({ ...prev, email: validateEmail(val) }));
+                  }
+                }}
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, email: true }));
+                  setErrors((prev) => ({ ...prev, email: validateEmail(formData.email) }));
+                }}
                 placeholder="name@hospital.org"
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className={cn(
+                  "w-full h-10 px-3 bg-surface-container-lowest border rounded-lg text-sm text-on-surface focus:outline-none transition-all",
+                  errors.email && touched.email
+                    ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                    : "border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                )}
               />
+              {errors.email && touched.email && (
+                <p className="mt-1 text-[11px] text-rose-500 flex items-center gap-1 font-medium">
+                  <span className="material-symbols-outlined text-[13px]">error</span>
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -207,15 +251,43 @@ export default function DoctorModal({
                 Contact Phone Number <span className="text-rose-500">*</span>
               </label>
               <input
-                type="text"
+                type="tel"
                 required
                 value={formData.contactNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, contactNumber: e.target.value })
-                }
+                onChange={(e) => {
+                  // Strictly disallow letters; allow numbers and phone symbols (+, -, space, parens)
+                  const val = e.target.value.replace(/[a-zA-Z]/g, '');
+                  setFormData({ ...formData, contactNumber: val });
+                  if (touched.contactNumber || val.length > 0) {
+                    setErrors((prev) => ({ ...prev, contactNumber: validatePhone(val) }));
+                  }
+                }}
+                onKeyDown={(e) => {
+                  // Prevent typing letters directly
+                  if (e.key.length === 1 && /[a-zA-Z]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    setErrors((prev) => ({ ...prev, contactNumber: 'Phone number cannot contain letters, only numbers are allowed' }));
+                    setTouched((prev) => ({ ...prev, contactNumber: true }));
+                  }
+                }}
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, contactNumber: true }));
+                  setErrors((prev) => ({ ...prev, contactNumber: validatePhone(formData.contactNumber) }));
+                }}
                 placeholder="+1-555-0192"
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className={cn(
+                  "w-full h-10 px-3 bg-surface-container-lowest border rounded-lg text-sm text-on-surface focus:outline-none transition-all",
+                  errors.contactNumber && touched.contactNumber
+                    ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                    : "border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                )}
               />
+              {errors.contactNumber && touched.contactNumber && (
+                <p className="mt-1 text-[11px] text-rose-500 flex items-center gap-1 font-medium">
+                  <span className="material-symbols-outlined text-[13px]">error</span>
+                  {errors.contactNumber}
+                </p>
+              )}
             </div>
           </div>
 

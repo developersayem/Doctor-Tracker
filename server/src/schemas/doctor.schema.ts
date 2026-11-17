@@ -29,21 +29,23 @@ export const createDoctorSchema = z.object({
     .optional(),
   phone: z
     .string()
+    .trim()
     .min(7, "Phone number is too short")
     .max(20, "Phone number is too long")
-    .trim()
+    .regex(/^[0-9+\-\s()]+$/, "Phone number cannot contain letters, only numbers are allowed")
     .optional(),
   contactNumber: z
     .string()
+    .trim()
     .min(7, "Contact number is too short")
     .max(20, "Contact number is too long")
-    .trim()
+    .regex(/^[0-9+\-\s()]+$/, "Contact number cannot contain letters, only numbers are allowed")
     .optional(),
   email: z
     .string({ required_error: "Email is required" })
-    .email("Please provide a valid email address")
     .trim()
-    .toLowerCase(),
+    .toLowerCase()
+    .email("Email must include '@' and be a valid email address"),
   status: z.preprocess(normalizeDoctorStatus, z.enum(["active", "on-leave"])).default("active"),
   yearsOfExperience: z.coerce.number().int().min(0, "Experience cannot be negative").max(70, "Experience cannot exceed 70").optional(),
   maxCapacity: z.coerce.number().int().min(1, "Capacity must be at least 1").max(100, "Capacity cannot exceed 100").optional(),

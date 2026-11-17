@@ -63,9 +63,10 @@ export const createPatientSchema = z.object({
   ).default("Stable"),
   contactNumber: z
     .string({ required_error: "Contact number is required" })
+    .trim()
     .min(7, "Contact number is too short")
     .max(20, "Contact number is too long")
-    .trim(),
+    .regex(/^[0-9+\-\s()]+$/, "Contact number cannot contain letters, only numbers are allowed"),
   admissionDate: z
     .string()
     .datetime({ offset: true })
