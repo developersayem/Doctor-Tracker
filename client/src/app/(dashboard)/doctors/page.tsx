@@ -24,9 +24,8 @@ const FILTER_SPECIALTIES: SelectOption[] = [
 
 const FILTER_STATUSES: SelectOption[] = [
   { value: '', label: 'All Statuses', icon: 'filter_list' },
-  { value: 'Active', label: 'Active', statusDot: 'active' },
-  { value: 'On Leave', label: 'On Leave', statusDot: 'leave' },
-  { value: 'Inactive', label: 'Inactive', statusDot: 'inactive' },
+  { value: 'active', label: 'Active', statusDot: 'active' },
+  { value: 'on-leave', label: 'On Leave', statusDot: 'leave' },
 ];
 
 export default function DoctorsPage() {

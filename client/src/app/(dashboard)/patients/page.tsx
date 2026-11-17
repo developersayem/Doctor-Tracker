@@ -13,10 +13,10 @@ import { toast } from 'sonner';
 
 const CONDITION_TABS = [
   { label: 'All Patients', value: '' },
-  { label: 'Critical / Acute', value: 'critical' },
-  { label: 'Under Observation', value: 'observation' },
-  { label: 'Stable', value: 'stable' },
-  { label: 'Recovered', value: 'recovered' },
+  { label: 'Critical / Acute', value: 'Critical' },
+  { label: 'Under Observation', value: 'Under Observation' },
+  { label: 'Stable', value: 'Stable' },
+  { label: 'Recovered', value: 'Recovered' },
 ];
 
 export default function PatientsPage() {

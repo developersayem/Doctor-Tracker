@@ -3,6 +3,34 @@ import { z } from "zod";
 export const patientConditions = ["Critical", "Stable", "Under Observation", "Recovered"] as const;
 export const patientGenders = ["male", "female", "other"] as const;
 
+export const normalizePatientCondition = (val: unknown): unknown => {
+  if (typeof val !== "string") return val;
+  const clean = val.toLowerCase().replace(/_/g, " ").trim();
+  if (clean.includes("critical") || clean.includes("acute") || clean.includes("arrest")) return "Critical";
+  if (clean.includes("observation") || clean.includes("arrhythmia")) return "Under Observation";
+  if (
+    clean.includes("stable") ||
+    clean.includes("hypertension") ||
+    clean.includes("diabetes") ||
+    clean.includes("pneumonia") ||
+    clean.includes("fracture") ||
+    clean.includes("routine")
+  )
+    return "Stable";
+  if (clean.includes("recovered") || clean.includes("discharge")) return "Recovered";
+  for (const c of patientConditions) {
+    if (c.toLowerCase() === clean) return c;
+  }
+  return val;
+};
+
+export const normalizePatientGender = (val: unknown): unknown => {
+  if (typeof val !== "string") return val;
+  const clean = val.toLowerCase().trim();
+  if (clean === "male" || clean === "female" || clean === "other") return clean;
+  return val;
+};
+
 /**
  * Validation schema for registering a new patient.
  */
@@ -17,16 +45,22 @@ export const createPatientSchema = z.object({
     .int("Age must be an integer")
     .min(0, "Age cannot be negative")
     .max(150, "Age cannot exceed 150"),
-  gender: z.enum(patientGenders, {
-    required_error: "Gender is required",
-    invalid_type_error: "Gender must be male, female, or other",
-  }),
+  gender: z.preprocess(
+    normalizePatientGender,
+    z.enum(patientGenders, {
+      required_error: "Gender is required",
+      invalid_type_error: "Gender must be male, female, or other",
+    })
+  ),
   doctorId: z
     .string({ required_error: "Doctor ID is required" })
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid Doctor ID format. Expected 24-character hexadecimal ObjectId"),
-  condition: z.enum(patientConditions, {
-    required_error: "Clinical condition is required",
-  }).default("Stable"),
+  condition: z.preprocess(
+    normalizePatientCondition,
+    z.enum(patientConditions, {
+      required_error: "Clinical condition is required",
+    })
+  ).default("Stable"),
   contactNumber: z
     .string({ required_error: "Contact number is required" })
     .min(7, "Contact number is too short")
@@ -64,8 +98,8 @@ export const patientQuerySchema = z.object({
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid Doctor ID format")
     .optional(),
-  condition: z.enum(patientConditions).optional(),
-  gender: z.enum(patientGenders).optional(),
+  condition: z.preprocess(normalizePatientCondition, z.enum(patientConditions)).optional(),
+  gender: z.preprocess(normalizePatientGender, z.enum(patientGenders)).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   dateField: z.enum(["createdAt", "admissionDate"]).optional(),

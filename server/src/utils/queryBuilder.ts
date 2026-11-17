@@ -131,6 +131,7 @@ export const calculatePaginationMeta = (totalDocs: number, page: number, limit: 
   return {
     page,
     limit,
+    total: totalDocs,
     totalDocs,
     totalPages,
     hasNextPage: page < totalPages,
