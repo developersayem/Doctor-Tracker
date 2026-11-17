@@ -1,0 +1,344 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import apiClient from '@/lib/axios';
+import { Doctor, ApiResponse } from '@/types';
+import { toast } from 'sonner';
+
+interface DoctorModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  doctor?: Doctor | null;
+}
+
+const SPECIALIZATIONS = [
+  'Cardiology',
+  'Neurology',
+  'Pediatrics',
+  'Orthopedics',
+  'Oncology',
+  'General Medicine',
+  'Dermatology',
+  'Psychiatry',
+  'Endocrinology',
+  'Pulmonology',
+];
+
+const HOSPITALS = [
+  'Metro General Hospital - Central',
+  'St. Jude Medical Center',
+  'Memorial Sloan Pavilion',
+  'Mount Sinai Healthcare',
+  'Johns Hopkins Academic Hospital',
+];
+
+export default function DoctorModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  doctor,
+}: DoctorModalProps) {
+  const isEdit = !!doctor;
+
+  const [formData, setFormData] = useState({
+    name: '',
+    specialization: 'Cardiology',
+    contactNumber: '',
+    email: '',
+    hospital: 'Metro General Hospital - Central',
+    status: 'Active' as 'Active' | 'On Leave' | 'Inactive',
+    maxCapacity: 20,
+    yearsOfExperience: 5,
+    bio: '',
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (doctor) {
+      setFormData({
+        name: doctor.name || '',
+        specialization: doctor.specialization || 'Cardiology',
+        contactNumber: doctor.contactNumber || '',
+        email: doctor.email || '',
+        hospital: doctor.hospital || 'Metro General Hospital - Central',
+        status: doctor.status || 'Active',
+        maxCapacity: doctor.maxCapacity || 20,
+        yearsOfExperience: doctor.yearsOfExperience || 5,
+        bio: doctor.bio || '',
+      });
+    } else {
+      setFormData({
+        name: '',
+        specialization: 'Cardiology',
+        contactNumber: '',
+        email: '',
+        hospital: 'Metro General Hospital - Central',
+        status: 'Active',
+        maxCapacity: 20,
+        yearsOfExperience: 5,
+        bio: '',
+      });
+    }
+  }, [doctor, isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (isEdit && doctor) {
+        await apiClient.put<ApiResponse<Doctor>>(`/doctors/${doctor._id}`, formData);
+        toast.success(`Physician record for ${formData.name} updated successfully`);
+      } else {
+        await apiClient.post<ApiResponse<Doctor>>('/doctors', formData);
+        toast.success(`Physician ${formData.name} registered to medical directory`);
+      }
+      onSuccess();
+      onClose();
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || 'Failed to save physician record';
+      toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div className="w-full max-w-xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low/60">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm">
+              <span className="material-symbols-outlined text-[20px]">
+                {isEdit ? 'edit_note' : 'person_add'}
+              </span>
+            </div>
+            <div>
+              <h3 className="font-headline text-base font-bold text-on-surface">
+                {isEdit ? 'Edit Physician Credentials' : 'Register New Physician'}
+              </h3>
+              <p className="text-xs text-outline">
+                {isEdit
+                  ? 'Update medical credentialing and department allocation'
+                  : 'Add an attending physician to the hospital administrative roster'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
+          {/* Full Name & Title */}
+          <div>
+            <label className="block text-xs font-semibold text-on-surface mb-1">
+              Physician Full Name & Degree *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="e.g. Dr. Marcus Vance, MD"
+              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            />
+          </div>
+
+          {/* Specialization & Hospital Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Medical Specialty *
+              </label>
+              <select
+                required
+                value={formData.specialization}
+                onChange={(e) =>
+                  setFormData({ ...formData, specialization: e.target.value })
+                }
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              >
+                {SPECIALIZATIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Affiliated Hospital *
+              </label>
+              <select
+                required
+                value={formData.hospital}
+                onChange={(e) =>
+                  setFormData({ ...formData, hospital: e.target.value })
+                }
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              >
+                {HOSPITALS.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Email & Contact Number */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Work Email Address *
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="name@hospital.org"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Contact Phone Number *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.contactNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, contactNumber: e.target.value })
+                }
+                placeholder="+1-555-0192"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Status, Max Capacity, Experience */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Active Status
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    status: e.target.value as 'Active' | 'On Leave' | 'Inactive',
+                  })
+                }
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              >
+                <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Patient Capacity
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={formData.maxCapacity}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    maxCapacity: parseInt(e.target.value, 10) || 20,
+                  })
+                }
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface mb-1">
+                Experience (Yrs)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={60}
+                value={formData.yearsOfExperience}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    yearsOfExperience: parseInt(e.target.value, 10) || 0,
+                  })
+                }
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Biography / Clinical Notes */}
+          <div>
+            <label className="block text-xs font-semibold text-on-surface mb-1">
+              Clinical Biography & Board Certifications
+            </label>
+            <textarea
+              rows={3}
+              value={formData.bio}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              placeholder="Board certified specialist with expertise in complex clinical interventions..."
+              className="w-full p-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            ></textarea>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="pt-4 border-t border-outline-variant/30 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="px-4 py-2 rounded-lg border border-outline-variant/50 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-60"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[16px]">
+                    save
+                  </span>
+                  <span>{isEdit ? 'Update Physician' : 'Confirm Registration'}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
