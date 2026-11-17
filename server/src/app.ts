@@ -7,11 +7,16 @@ import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
 
 import apiRouter from "./routes/index.js";
+import { setupSwagger } from "./config/swagger.js";
 
 const app: Application = express();
 
-// 1. Security HTTP Headers
-app.use(helmet());
+// 1. Security HTTP Headers (configured for Swagger UI compatibility)
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 // 2. CORS Configuration for cross-origin frontend communication
 app.use(
@@ -52,10 +57,13 @@ app.get("/api/health", (_req: Request, res: Response) => {
   });
 });
 
-// 6. Mount REST API v1 routes
+// 6. Interactive Swagger API Documentation
+setupSwagger(app);
+
+// 7. Mount REST API v1 routes
 app.use("/api/v1", apiRouter);
 
-// 7. Error Handling Pipeline
+// 8. Error Handling Pipeline
 app.use(notFoundHandler);
 app.use(errorHandler);
 
