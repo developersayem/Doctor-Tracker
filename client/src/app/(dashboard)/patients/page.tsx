@@ -106,7 +106,7 @@ export default function PatientsPage() {
   };
 
   return (
-    <div className="flex flex-col w-full p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="flex flex-col w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -184,7 +184,7 @@ export default function PatientsPage() {
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {/* Attending Physician Dropdown Filter */}
-          <div className="w-56">
+          <div className="w-full sm:w-64">
             <CustomSelect
               options={[
                 { value: '', label: 'All Attending Physicians', icon: 'stethoscope' },
@@ -226,7 +226,7 @@ export default function PatientsPage() {
       {/* Registry Table */}
       <div className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[700px] text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low text-[11px] font-mono text-outline uppercase tracking-wider">
                 <th className="py-3 px-4">Patient / Demographics</th>

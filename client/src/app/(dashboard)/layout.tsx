@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
@@ -13,6 +13,13 @@ export default function DashboardLayout({
 }) {
   const { user, token, isLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Automatically close sidebar drawer when navigating to a new page on mobile
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!isLoading && !token) {
@@ -37,10 +44,10 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-surface">
-      <Sidebar />
-      <div className="pl-64">
-        <Topbar />
-        <main className="w-full pt-16 bg-surface min-h-screen">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="pl-0 lg:pl-64 transition-all">
+        <Topbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
+        <main className="w-full pt-16 bg-surface min-h-screen overflow-x-hidden">
           {children}
         </main>
       </div>

@@ -82,7 +82,7 @@ export default function DashboardPage() {
   }));
 
   return (
-    <div className="flex flex-col w-full p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="flex flex-col w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Executive Control & Context Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-2">
@@ -600,7 +600,7 @@ export default function DashboardPage() {
 
         {/* Responsive Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[640px] text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low text-[11px] font-mono text-outline uppercase tracking-wider">
                 <th className="py-3 px-4 rounded-l-lg">Attending Physician</th>

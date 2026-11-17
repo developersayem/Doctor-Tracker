@@ -104,7 +104,7 @@ export default function DoctorsPage() {
   };
 
   return (
-    <div className="flex flex-col w-full p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="flex flex-col w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -161,7 +161,7 @@ export default function DoctorsPage() {
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {/* Specialty Filter */}
-          <div className="w-48">
+          <div className="w-full sm:w-48">
             <CustomSelect
               options={FILTER_SPECIALTIES}
               value={specialization}
@@ -175,7 +175,7 @@ export default function DoctorsPage() {
           </div>
 
           {/* Status Filter */}
-          <div className="w-40">
+          <div className="w-full sm:w-40">
             <CustomSelect
               options={FILTER_STATUSES}
               value={status}
@@ -208,7 +208,7 @@ export default function DoctorsPage() {
       {/* Directory Table */}
       <div className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[700px] text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low text-[11px] font-mono text-outline uppercase tracking-wider">
                 <th className="py-3 px-4">Physician Name</th>

@@ -131,7 +131,7 @@ export default function DoctorDetailPage() {
   ).length;
 
   return (
-    <div className="flex flex-col w-full p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="flex flex-col w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Back Breadcrumb */}
       <div className="flex items-center gap-2">
         <button
@@ -334,7 +334,7 @@ export default function DoctorDetailPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[640px] text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low text-[11px] font-mono text-outline uppercase tracking-wider">
                 <th className="py-3 px-4 rounded-l-lg">Patient Name</th>

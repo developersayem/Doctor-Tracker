@@ -15,12 +15,14 @@ interface TopbarProps {
   onSearchChange?: (val: string) => void;
   searchValue?: string;
   searchPlaceholder?: string;
+  onMenuToggle?: () => void;
 }
 
 export default function Topbar({
   onSearchChange,
   searchValue = "",
   searchPlaceholder = "Search doctors, patients, specialty... ⌘K",
+  onMenuToggle,
 }: TopbarProps) {
   const router = useRouter();
 
@@ -136,7 +138,18 @@ export default function Topbar({
   const hasQuery = query.trim().length > 0;
 
   return (
-    <header className="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 flex items-center justify-between px-space-xl transition-colors">
+    <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 flex items-center justify-between px-3 sm:px-6 lg:px-space-xl transition-all">
+      {/* Mobile Hamburger Menu Toggle */}
+      <button
+        type="button"
+        onClick={onMenuToggle}
+        className="lg:hidden mr-2 p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors flex items-center justify-center shrink-0"
+        title="Open navigation menu"
+        aria-label="Open navigation menu"
+      >
+        <span className="material-symbols-outlined text-[24px]">menu</span>
+      </button>
+
       {/* Global Multi-Entity Search Bar */}
       <div
         ref={searchContainerRef}
