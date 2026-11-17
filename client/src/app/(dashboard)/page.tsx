@@ -6,19 +6,28 @@ import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 import { AnalyticsData, ApiResponse } from '@/types';
 import { formatDate, getConditionBadgeClass } from '@/lib/utils';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
+import dynamic from 'next/dynamic';
 import DoctorModal from '@/components/doctors/DoctorModal';
+
+const AdmissionsAreaChart = dynamic(
+  () => import('@/components/charts/AdmissionsAreaChart'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full flex items-center justify-center text-outline text-xs">
+        <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin mr-2"></div>
+        <span>Rendering telemetry...</span>
+      </div>
+    ),
+  }
+);
+
+const WorkloadPieChart = dynamic(
+  () => import('@/components/charts/WorkloadPieChart'),
+  {
+    ssr: false,
+  }
+);
 
 const SPECIALTY_COLORS = [
   '#00685f', // primary teal
@@ -354,55 +363,7 @@ export default function DashboardPage() {
 
           {/* Recharts Area Chart */}
           <div className="h-64 w-full pt-2">
-            {mounted && formattedTrends.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={formattedTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="admissionsGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00685f" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#00685f" stopOpacity={0.0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eaedff" vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    stroke="#6d7a77"
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={{ stroke: '#bcc9c6' }}
-                  />
-                  <YAxis
-                    stroke="#6d7a77"
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                    allowDecimals={false}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#131b2e',
-                      borderRadius: '8px',
-                      border: 'none',
-                      color: '#ffffff',
-                      fontSize: '12px',
-                    }}
-                    labelStyle={{ color: '#89f5e7', fontWeight: 600 }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="admissions"
-                    stroke="#00685f"
-                    strokeWidth={2.5}
-                    fillOpacity={1}
-                    fill="url(#admissionsGrad)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center text-outline text-xs">
-                {isLoading ? 'Compiling telemetry...' : 'Awaiting clinical admissions data'}
-              </div>
-            )}
+            <AdmissionsAreaChart data={formattedTrends} />
           </div>
 
           {/* Analytical Sub-Metrics */}
@@ -447,26 +408,7 @@ export default function DashboardPage() {
           {/* Doughnut Chart */}
           <div className="flex items-center justify-center gap-6 py-2">
             <div className="relative w-36 h-36 flex items-center justify-center">
-              {mounted && pieData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={42}
-                      outerRadius={65}
-                      stroke="none"
-                    >
-                      {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : null}
+              <WorkloadPieChart data={pieData} />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
                 <span className="font-headline text-lg font-bold text-on-surface leading-none">
                   {kpis.totalPatients}
