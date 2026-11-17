@@ -8,7 +8,26 @@ import { Doctor, ApiResponse, PaginationMeta } from '@/types';
 import { getDoctorStatusBadgeClass } from '@/lib/utils';
 import DoctorModal from '@/components/doctors/DoctorModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 import { toast } from 'sonner';
+
+const FILTER_SPECIALTIES: SelectOption[] = [
+  { value: '', label: 'All Specialties', icon: 'medical_services' },
+  { value: 'Cardiology', label: 'Cardiology', icon: 'favorite' },
+  { value: 'Neurology', label: 'Neurology', icon: 'psychology' },
+  { value: 'Pediatrics', label: 'Pediatrics', icon: 'child_care' },
+  { value: 'Orthopedics', label: 'Orthopedics', icon: 'accessibility_new' },
+  { value: 'Oncology', label: 'Oncology', icon: 'biotech' },
+  { value: 'General Medicine', label: 'General Medicine', icon: 'health_and_safety' },
+  { value: 'Dermatology', label: 'Dermatology', icon: 'dermatology' },
+];
+
+const FILTER_STATUSES: SelectOption[] = [
+  { value: '', label: 'All Statuses', icon: 'filter_list' },
+  { value: 'Active', label: 'Active', statusDot: 'active' },
+  { value: 'On Leave', label: 'On Leave', statusDot: 'leave' },
+  { value: 'Inactive', label: 'Inactive', statusDot: 'inactive' },
+];
 
 export default function DoctorsPage() {
   const [search, setSearch] = useState('');
@@ -143,38 +162,32 @@ export default function DoctorsPage() {
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {/* Specialty Filter */}
-          <select
-            value={specialization}
-            onChange={(e) => {
-              setSpecialization(e.target.value);
-              setPage(1);
-            }}
-            className="h-10 px-3 bg-surface-container-low/50 border border-outline-variant/40 rounded-lg text-xs font-medium text-on-surface focus:outline-none focus:border-primary transition-all"
-          >
-            <option value="">All Specialties</option>
-            <option value="Cardiology">Cardiology</option>
-            <option value="Neurology">Neurology</option>
-            <option value="Pediatrics">Pediatrics</option>
-            <option value="Orthopedics">Orthopedics</option>
-            <option value="Oncology">Oncology</option>
-            <option value="General Medicine">General Medicine</option>
-            <option value="Dermatology">Dermatology</option>
-          </select>
+          <div className="w-48">
+            <CustomSelect
+              options={FILTER_SPECIALTIES}
+              value={specialization}
+              onChange={(val) => {
+                setSpecialization(val);
+                setPage(1);
+              }}
+              placeholder="All Specialties"
+              buttonClassName="h-10 text-xs bg-surface-container-low/50"
+            />
+          </div>
 
           {/* Status Filter */}
-          <select
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
-              setPage(1);
-            }}
-            className="h-10 px-3 bg-surface-container-low/50 border border-outline-variant/40 rounded-lg text-xs font-medium text-on-surface focus:outline-none focus:border-primary transition-all"
-          >
-            <option value="">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="On Leave">On Leave</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+          <div className="w-40">
+            <CustomSelect
+              options={FILTER_STATUSES}
+              value={status}
+              onChange={(val) => {
+                setStatus(val);
+                setPage(1);
+              }}
+              placeholder="All Statuses"
+              buttonClassName="h-10 text-xs bg-surface-container-low/50"
+            />
+          </div>
 
           {(search || specialization || status) && (
             <button

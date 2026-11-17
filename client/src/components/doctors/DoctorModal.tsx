@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import apiClient from '@/lib/axios';
 import { Doctor, ApiResponse } from '@/types';
 import { toast } from 'sonner';
+import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 
 interface DoctorModalProps {
   isOpen: boolean;
@@ -12,25 +14,31 @@ interface DoctorModalProps {
   doctor?: Doctor | null;
 }
 
-const SPECIALIZATIONS = [
-  'Cardiology',
-  'Neurology',
-  'Pediatrics',
-  'Orthopedics',
-  'Oncology',
-  'General Medicine',
-  'Dermatology',
-  'Psychiatry',
-  'Endocrinology',
-  'Pulmonology',
+const SPECIALTY_OPTIONS: SelectOption[] = [
+  { value: 'Cardiology', label: 'Cardiology', icon: 'favorite', description: 'Cardiovascular Care' },
+  { value: 'Neurology', label: 'Neurology', icon: 'psychology', description: 'Neuroscience & Brain Care' },
+  { value: 'Pediatrics', label: 'Pediatrics', icon: 'child_care', description: 'Neonatal & Child Health' },
+  { value: 'Orthopedics', label: 'Orthopedics', icon: 'accessibility_new', description: 'Musculoskeletal Surgery' },
+  { value: 'Oncology', label: 'Oncology', icon: 'biotech', description: 'Cancer Center of Excellence' },
+  { value: 'General Medicine', label: 'General Medicine', icon: 'health_and_safety', description: 'Internal & Preventative Care' },
+  { value: 'Dermatology', label: 'Dermatology', icon: 'dermatology', description: 'Clinical Dermatology' },
+  { value: 'Psychiatry', label: 'Psychiatry', icon: 'mood', description: 'Behavioral & Mental Health' },
+  { value: 'Endocrinology', label: 'Endocrinology', icon: 'vital_signs', description: 'Glandular & Metabolic Care' },
+  { value: 'Pulmonology', label: 'Pulmonology', icon: 'air', description: 'Respiratory Care Unit' },
 ];
 
-const HOSPITALS = [
-  'Metro General Hospital - Central',
-  'St. Jude Medical Center',
-  'Memorial Sloan Pavilion',
-  'Mount Sinai Healthcare',
-  'Johns Hopkins Academic Hospital',
+const HOSPITAL_OPTIONS: SelectOption[] = [
+  { value: 'Metro General Hospital - Central', label: 'Metro General Hospital - Central', description: 'Central Campus • 680 Beds', icon: 'apartment', badge: 'Primary' },
+  { value: 'St. Jude Medical Center', label: 'St. Jude Medical Center', description: 'North Pavilion • 320 Beds', icon: 'domain', badge: 'Pavilion' },
+  { value: 'Memorial Sloan Pavilion', label: 'Memorial Sloan Pavilion', description: 'East Wing • 280 Beds', icon: 'local_hospital' },
+  { value: 'Mount Sinai Healthcare', label: 'Mount Sinai Healthcare', description: 'Academic Center • 450 Beds', icon: 'apartment' },
+  { value: 'Johns Hopkins Academic Hospital', label: 'Johns Hopkins Academic Hospital', description: 'Research Campus • 510 Beds', icon: 'domain' },
+];
+
+const STATUS_OPTIONS: SelectOption[] = [
+  { value: 'Active', label: 'Active', statusDot: 'active', description: 'On Duty • Receiving Patients' },
+  { value: 'On Leave', label: 'On Leave', statusDot: 'leave', description: 'Temporary Absence' },
+  { value: 'Inactive', label: 'Inactive', statusDot: 'inactive', description: 'Off Roster / Archived' },
 ];
 
 export default function DoctorModal({
@@ -40,6 +48,7 @@ export default function DoctorModal({
   doctor,
 }: DoctorModalProps) {
   const isEdit = !!doctor;
+  const [mounted, setMounted] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -54,6 +63,21 @@ export default function DoctorModal({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (doctor) {
@@ -83,7 +107,7 @@ export default function DoctorModal({
     }
   }, [doctor, isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,8 +132,8 @@ export default function DoctorModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-6 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low/60">
@@ -133,7 +157,7 @@ export default function DoctorModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors"
+            className="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
@@ -144,7 +168,7 @@ export default function DoctorModal({
           {/* Full Name & Title */}
           <div>
             <label className="block text-xs font-semibold text-on-surface mb-1">
-              Physician Full Name & Degree *
+              Physician Full Name & Degree <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -152,58 +176,40 @@ export default function DoctorModal({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g. Dr. Marcus Vance, MD"
-              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
           </div>
 
-          {/* Specialization & Hospital Row */}
+          {/* Specialization & Hospital Row (Custom Dropdowns) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-on-surface mb-1">
-                Medical Specialty *
-              </label>
-              <select
-                required
-                value={formData.specialization}
-                onChange={(e) =>
-                  setFormData({ ...formData, specialization: e.target.value })
-                }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                {SPECIALIZATIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CustomSelect
+              label="Medical Specialty"
+              required
+              options={SPECIALTY_OPTIONS}
+              value={formData.specialization}
+              onChange={(val) => setFormData({ ...formData, specialization: val })}
+              searchable
+              placeholder="Select specialty..."
+              icon="medical_services"
+            />
 
-            <div>
-              <label className="block text-xs font-semibold text-on-surface mb-1">
-                Affiliated Hospital *
-              </label>
-              <select
-                required
-                value={formData.hospital}
-                onChange={(e) =>
-                  setFormData({ ...formData, hospital: e.target.value })
-                }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                {HOSPITALS.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CustomSelect
+              label="Affiliated Hospital"
+              required
+              options={HOSPITAL_OPTIONS}
+              value={formData.hospital}
+              onChange={(val) => setFormData({ ...formData, hospital: val })}
+              searchable
+              placeholder="Select facility..."
+              icon="apartment"
+            />
           </div>
 
           {/* Email & Contact Number */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-on-surface mb-1">
-                Work Email Address *
+                Work Email Address <span className="text-rose-500">*</span>
               </label>
               <input
                 type="email"
@@ -211,13 +217,13 @@ export default function DoctorModal({
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="name@hospital.org"
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-on-surface mb-1">
-                Contact Phone Number *
+                Contact Phone Number <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -227,32 +233,26 @@ export default function DoctorModal({
                   setFormData({ ...formData, contactNumber: e.target.value })
                 }
                 placeholder="+1-555-0192"
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
           </div>
 
           {/* Status, Max Capacity, Experience */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-on-surface mb-1">
-                Active Status
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    status: e.target.value as 'Active' | 'On Leave' | 'Inactive',
-                  })
-                }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                <option value="Active">Active</option>
-                <option value="On Leave">On Leave</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Active Status"
+              options={STATUS_OPTIONS}
+              value={formData.status}
+              onChange={(val) =>
+                setFormData({
+                  ...formData,
+                  status: val as 'Active' | 'On Leave' | 'Inactive',
+                })
+              }
+              placeholder="Select status..."
+              icon="wifi_tethering"
+            />
 
             <div>
               <label className="block text-xs font-semibold text-on-surface mb-1">
@@ -262,14 +262,15 @@ export default function DoctorModal({
                 type="number"
                 min={1}
                 max={100}
+                required
                 value={formData.maxCapacity}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    maxCapacity: parseInt(e.target.value, 10) || 20,
+                    maxCapacity: parseInt(e.target.value, 10) || 1,
                   })
                 }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
 
@@ -281,6 +282,7 @@ export default function DoctorModal({
                 type="number"
                 min={0}
                 max={60}
+                required
                 value={formData.yearsOfExperience}
                 onChange={(e) =>
                   setFormData({
@@ -288,12 +290,12 @@ export default function DoctorModal({
                     yearsOfExperience: parseInt(e.target.value, 10) || 0,
                   })
                 }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
           </div>
 
-          {/* Biography / Clinical Notes */}
+          {/* Clinical Biography */}
           <div>
             <label className="block text-xs font-semibold text-on-surface mb-1">
               Clinical Biography & Board Certifications
@@ -303,7 +305,7 @@ export default function DoctorModal({
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               placeholder="Board certified specialist with expertise in complex clinical interventions..."
-              className="w-full p-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              className="w-full p-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             ></textarea>
           </div>
 
@@ -313,14 +315,14 @@ export default function DoctorModal({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg border border-outline-variant/50 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors"
+              className="px-4 py-2 rounded-lg border border-outline-variant/50 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-60"
+              className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-60 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -339,6 +341,7 @@ export default function DoctorModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

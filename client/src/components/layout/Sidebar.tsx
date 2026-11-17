@@ -28,7 +28,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r border-outline-variant/40 z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.02)]">
+    <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r border-outline-variant/40 z-40 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.02)]">
       {/* Top Header / Brand */}
       <div className="flex flex-col flex-1">
         <div className="h-16 px-space-lg flex items-center gap-space-sm border-b border-outline-variant/30">

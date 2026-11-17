@@ -8,6 +8,7 @@ import { Patient, Doctor, ApiResponse, PaginationMeta } from '@/types';
 import { formatDate, getConditionBadgeClass } from '@/lib/utils';
 import PatientModal from '@/components/patients/PatientModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 import { toast } from 'sonner';
 
 const CONDITION_TABS = [
@@ -183,21 +184,27 @@ export default function PatientsPage() {
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {/* Attending Physician Dropdown Filter */}
-          <select
-            value={selectedDoctorId}
-            onChange={(e) => {
-              setSelectedDoctorId(e.target.value);
-              setPage(1);
-            }}
-            className="h-10 px-3 bg-surface-container-low/50 border border-outline-variant/40 rounded-lg text-xs font-medium text-on-surface focus:outline-none focus:border-primary transition-all max-w-[220px] truncate"
-          >
-            <option value="">All Attending Physicians</option>
-            {doctorsList.map((d) => (
-              <option key={d._id} value={d._id}>
-                {d.name} ({d.specialization})
-              </option>
-            ))}
-          </select>
+          <div className="w-56">
+            <CustomSelect
+              options={[
+                { value: '', label: 'All Attending Physicians', icon: 'stethoscope' },
+                ...doctorsList.map((d) => ({
+                  value: d._id,
+                  label: d.name,
+                  description: d.specialization,
+                  icon: 'stethoscope',
+                })),
+              ]}
+              value={selectedDoctorId}
+              onChange={(val) => {
+                setSelectedDoctorId(val);
+                setPage(1);
+              }}
+              searchable
+              placeholder="All Physicians"
+              buttonClassName="h-10 text-xs bg-surface-container-low/50"
+            />
+          </div>
 
           {(search || selectedConditionTab || selectedDoctorId) && (
             <button

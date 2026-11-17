@@ -14,7 +14,7 @@ export default function Topbar({
   searchPlaceholder = 'Search doctors, patients, MRN, specialty... ⌘K',
 }: TopbarProps) {
   return (
-    <header className="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-40 flex items-center justify-between px-space-xl">
+    <header className="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 flex items-center justify-between px-space-xl">
       {/* Global Search Bar */}
       <div className="flex items-center gap-space-lg flex-1 max-w-xl">
         <div className="relative w-full">

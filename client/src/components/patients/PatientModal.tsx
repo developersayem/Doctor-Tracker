@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import apiClient from '@/lib/axios';
 import { Patient, Doctor, ApiResponse } from '@/types';
 import { toast } from 'sonner';
+import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 
 interface PatientModalProps {
   isOpen: boolean;
@@ -13,17 +15,23 @@ interface PatientModalProps {
   defaultDoctorId?: string;
 }
 
-const COMMON_CONDITIONS = [
-  'Critical - Cardiac Arrest',
-  'Post-Op Observation',
-  'Stable - Routine Follow-up',
-  'Acute Asthma Exacerbation',
-  'Hypertension Stage 2',
-  'Type II Diabetes Mellitus',
-  'Under Observation - Arrhythmia',
-  'Recovered - Pending Discharge',
-  'Bacterial Pneumonia',
-  'Fracture - Closed Reduction',
+const COMMON_CONDITIONS: SelectOption[] = [
+  { value: 'Critical - Cardiac Arrest', label: 'Critical - Cardiac Arrest', statusDot: 'critical', badge: 'Critical' },
+  { value: 'Acute Asthma Exacerbation', label: 'Acute Asthma Exacerbation', statusDot: 'critical', badge: 'Critical' },
+  { value: 'Post-Op Observation', label: 'Post-Op Observation', statusDot: 'observation', badge: 'Observ.' },
+  { value: 'Under Observation - Arrhythmia', label: 'Under Observation - Arrhythmia', statusDot: 'observation', badge: 'Observ.' },
+  { value: 'Stable - Routine Follow-up', label: 'Stable - Routine Follow-up', statusDot: 'stable', badge: 'Stable' },
+  { value: 'Hypertension Stage 2', label: 'Hypertension Stage 2', statusDot: 'stable', badge: 'Stable' },
+  { value: 'Type II Diabetes Mellitus', label: 'Type II Diabetes Mellitus', statusDot: 'stable', badge: 'Stable' },
+  { value: 'Bacterial Pneumonia', label: 'Bacterial Pneumonia', statusDot: 'stable', badge: 'Stable' },
+  { value: 'Fracture - Closed Reduction', label: 'Fracture - Closed Reduction', statusDot: 'stable', badge: 'Stable' },
+  { value: 'Recovered - Pending Discharge', label: 'Recovered - Pending Discharge', statusDot: 'active', badge: 'Discharge' },
+];
+
+const GENDER_OPTIONS: SelectOption[] = [
+  { value: 'Male', label: 'Male', icon: 'male' },
+  { value: 'Female', label: 'Female', icon: 'female' },
+  { value: 'Other', label: 'Other', icon: 'person' },
 ];
 
 export default function PatientModal({
@@ -34,13 +42,14 @@ export default function PatientModal({
   defaultDoctorId,
 }: PatientModalProps) {
   const isEdit = !!patient;
+  const [mounted, setMounted] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
     age: 45,
     gender: 'Male' as 'Male' | 'Female' | 'Other',
     contactNumber: '',
-    condition: COMMON_CONDITIONS[2],
+    condition: 'Stable - Routine Follow-up',
     doctorId: defaultDoctorId || '',
     admissionDate: new Date().toISOString().split('T')[0],
     notes: '',
@@ -49,6 +58,21 @@ export default function PatientModal({
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   // Fetch available doctors for the dropdown
   useEffect(() => {
@@ -86,7 +110,7 @@ export default function PatientModal({
         age: patient.age || 45,
         gender: patient.gender || 'Male',
         contactNumber: patient.contactNumber || '',
-        condition: patient.condition || COMMON_CONDITIONS[2],
+        condition: patient.condition || 'Stable - Routine Follow-up',
         doctorId: docId || '',
         admissionDate: patient.admissionDate
           ? new Date(patient.admissionDate).toISOString().split('T')[0]
@@ -99,7 +123,7 @@ export default function PatientModal({
         age: 45,
         gender: 'Male',
         contactNumber: '',
-        condition: COMMON_CONDITIONS[2],
+        condition: 'Stable - Routine Follow-up',
         doctorId: defaultDoctorId || '',
         admissionDate: new Date().toISOString().split('T')[0],
         notes: '',
@@ -107,7 +131,7 @@ export default function PatientModal({
     }
   }, [patient, isOpen, defaultDoctorId]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,32 +161,41 @@ export default function PatientModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+  const doctorOptions: SelectOption[] = doctors.map((d) => ({
+    value: d._id,
+    label: d.name,
+    description: `${d.specialization} • ${d.hospital.split(' - ')[0]}`,
+    icon: 'stethoscope',
+    badge: d.status === 'Active' ? 'On Duty' : d.status,
+    statusDot: d.status === 'Active' ? 'active' : 'leave',
+  }));
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-6 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low/60">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-white shadow-sm">
               <span className="material-symbols-outlined text-[20px]">
-                {isEdit ? 'assignment' : 'person_add'}
+                {isEdit ? 'clinical_notes' : 'patient_list'}
               </span>
             </div>
             <div>
               <h3 className="font-headline text-base font-bold text-on-surface">
-                {isEdit ? 'Update Patient Record' : 'Clinical Patient Intake'}
+                {isEdit ? 'Edit Patient Clinical Intake' : 'Register Patient Admission'}
               </h3>
               <p className="text-xs text-outline">
                 {isEdit
-                  ? 'Modify clinical condition or assigned physician roster'
-                  : 'Register and assign an incoming patient to an attending physician'}
+                  ? 'Update electronic health record and assigned physician'
+                  : 'Enroll a patient into the clinical monitoring telemetry'}
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors"
+            className="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
@@ -170,18 +203,18 @@ export default function PatientModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
-          {/* Patient Name */}
+          {/* Full Name */}
           <div>
             <label className="block text-xs font-semibold text-on-surface mb-1">
-              Patient Full Name *
+              Patient Full Name <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Eleanor Sterling"
-              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              placeholder="e.g. Eleanor Vance"
+              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
           </div>
 
@@ -189,7 +222,7 @@ export default function PatientModal({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-on-surface mb-1">
-                Age *
+                Age <span className="text-rose-500">*</span>
               </label>
               <input
                 type="number"
@@ -203,34 +236,28 @@ export default function PatientModal({
                     age: parseInt(e.target.value, 10) || 0,
                   })
                 }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-on-surface mb-1">
-                Gender *
-              </label>
-              <select
-                required
-                value={formData.gender}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    gender: e.target.value as 'Male' | 'Female' | 'Other',
-                  })
-                }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Gender"
+              required
+              options={GENDER_OPTIONS}
+              value={formData.gender}
+              onChange={(val) =>
+                setFormData({
+                  ...formData,
+                  gender: val as 'Male' | 'Female' | 'Other',
+                })
+              }
+              placeholder="Select gender..."
+              icon="wc"
+            />
 
             <div>
               <label className="block text-xs font-semibold text-on-surface mb-1">
-                Contact Phone *
+                Contact Phone <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -240,58 +267,35 @@ export default function PatientModal({
                   setFormData({ ...formData, contactNumber: e.target.value })
                 }
                 placeholder="+1-555-0182"
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
           </div>
 
           {/* Condition & Attending Physician */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-on-surface mb-1">
-                Clinical Diagnosis / Condition *
-              </label>
-              <input
-                type="text"
-                required
-                list="conditionList"
-                value={formData.condition}
-                onChange={(e) =>
-                  setFormData({ ...formData, condition: e.target.value })
-                }
-                placeholder="Select or enter condition..."
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              />
-              <datalist id="conditionList">
-                {COMMON_CONDITIONS.map((c) => (
-                  <option key={c} value={c} />
-                ))}
-              </datalist>
-            </div>
+            <CustomSelect
+              label="Clinical Condition / Diagnosis"
+              required
+              options={COMMON_CONDITIONS}
+              value={formData.condition}
+              onChange={(val) => setFormData({ ...formData, condition: val })}
+              searchable
+              placeholder="Select diagnosis..."
+              icon="vital_signs"
+            />
 
-            <div>
-              <label className="block text-xs font-semibold text-on-surface mb-1">
-                Attending Physician *
-              </label>
-              <select
-                required
-                value={formData.doctorId}
-                onChange={(e) =>
-                  setFormData({ ...formData, doctorId: e.target.value })
-                }
-                className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                {isLoadingDoctors ? (
-                  <option>Loading physicians...</option>
-                ) : (
-                  doctors.map((d) => (
-                    <option key={d._id} value={d._id}>
-                      {d.name} ({d.specialization} • {d.hospital.split(' - ')[0]})
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
+            <CustomSelect
+              label="Attending Physician"
+              required
+              options={isLoadingDoctors ? [{ value: '', label: 'Loading physicians...' }] : doctorOptions}
+              value={formData.doctorId}
+              onChange={(val) => setFormData({ ...formData, doctorId: val })}
+              searchable
+              placeholder={isLoadingDoctors ? 'Loading physicians...' : 'Select attending physician...'}
+              icon="stethoscope"
+              disabled={isLoadingDoctors}
+            />
           </div>
 
           {/* Admission Date */}
@@ -305,7 +309,7 @@ export default function PatientModal({
               onChange={(e) =>
                 setFormData({ ...formData, admissionDate: e.target.value })
               }
-              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              className="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
           </div>
 
@@ -319,7 +323,7 @@ export default function PatientModal({
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Admission notes, vital stats observations, medications prescribed..."
-              className="w-full p-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              className="w-full p-3 bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             ></textarea>
           </div>
 
@@ -329,14 +333,14 @@ export default function PatientModal({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg border border-outline-variant/50 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors"
+              className="px-4 py-2 rounded-lg border border-outline-variant/50 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-lg bg-secondary hover:bg-primary text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-60"
+              className="px-5 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-60 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -355,6 +359,7 @@ export default function PatientModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
