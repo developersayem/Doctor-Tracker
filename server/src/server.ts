@@ -2,6 +2,7 @@ import { createServer } from "http";
 import app from "./app.js";
 import { env } from "./config/env.js";
 import { connectDatabase, disconnectDatabase } from "./config/db.js";
+import { ensureAdminAccount } from "./services/auth.service.js";
 
 /**
  * Boots the HTTP server and establishes persistent database connectivity.
@@ -9,6 +10,9 @@ import { connectDatabase, disconnectDatabase } from "./config/db.js";
 const startServer = async () => {
   // Connect to MongoDB
   await connectDatabase();
+
+  // Ensure default administrator account is available
+  await ensureAdminAccount();
 
   const server = createServer(app);
 
