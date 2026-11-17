@@ -90,17 +90,6 @@ export default function Sidebar() {
             })}
           </nav>
         </div>
-
-        {/* Clinical Environment Telemetry */}
-        <div className="mx-space-md mt-auto mb-4 p-space-sm bg-surface-container-low rounded-xl border border-outline-variant/30 text-xs">
-          <div className="flex items-center gap-1.5 text-teal-700 font-semibold mb-1">
-            <span className="w-2 h-2 rounded-full bg-teal-600 animate-ping"></span>
-            <span>Live Node Connected</span>
-          </div>
-          <p className="text-on-surface-variant text-[11px] leading-relaxed">
-            St. Jude & Metro Health Systems synced with 256-bit HIPAA compliance.
-          </p>
-        </div>
       </div>
 
       {/* Footer / User Profile & Logout */}
