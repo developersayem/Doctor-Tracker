@@ -14,6 +14,7 @@ This document tracks all implementation phases and provides a **Human-like Git C
 - [x] Phase 5: Doctor Management REST API (CRUD + Query Builder)
 - [x] Phase 6: Patient Management REST API & Relational Association
 - [x] Phase 7: Analytics Engine ($facet Aggregation Pipeline) & Data Seeder
+- [x] Phase 7.5: Production-Grade Backend Test Suite (Vitest, In-Memory Mongo & Supertest)
 - [ ] Phase 8: Frontend (Next.js 15) Monorepo Initialization & Setup
 - [ ] Phase 9: Client Core Infrastructure (Axios, Auth State, Layout Shell)
 - [ ] Phase 10: Doctor Management UI (Directory, Search, Modals, Details Page)
@@ -78,6 +79,16 @@ This document tracks all implementation phases and provides a **Human-like Git C
   - Date-based admission trends.
 - [x] Implement `analytics.controller.ts` and route (`/api/v1/analytics/dashboard`).
 - [x] Implement `src/utils/seeder.ts` to automatically populate admin user, sample doctors, and sample patients.
+
+### Phase 7.5: Production-Grade Automated Backend Test Suite
+- [x] Setup Vitest test runner with `MongoMemoryServer` isolated in-memory database and Supertest.
+- [x] Write Unit tests for `queryBuilder.ts` (pagination, boundary limits, regex search, date ranges).
+- [x] Write Unit tests for `ApiError.ts` (status codes, factory methods, operational flags).
+- [x] Write Integration tests for Health check endpoints (`/health`, `/api/health`).
+- [x] Write Integration tests for Authentication (`/login`, `/me`, `/logout`, token expiration, invalid credentials).
+- [x] Write Integration tests for Doctor management (CRUD, duplicate email rejection, search filtering, patient count aggregation).
+- [x] Write Integration tests for Patient management (CRUD, doctor existence validation, condition filtering, cascade handling).
+- [x] Write Integration tests for Analytics `$facet` aggregation pipeline (KPI counts, ratio, workloads, trends).
 
 ### Phase 8: Frontend (Next.js 15) Monorepo Setup
 - [ ] Initialize Next.js 15 App Router app in `client/` directory with TypeScript and Tailwind CSS.
