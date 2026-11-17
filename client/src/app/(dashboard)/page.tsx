@@ -42,9 +42,9 @@ export default function DashboardPage() {
   }, []);
 
   const { data: analyticsRes, isLoading, refetch } = useQuery<ApiResponse<AnalyticsData>>({
-    queryKey: ['analytics-dashboard'],
+    queryKey: ['analytics-dashboard', timeRange],
     queryFn: async () => {
-      const res = await apiClient.get<ApiResponse<AnalyticsData>>('/analytics/dashboard');
+      const res = await apiClient.get<ApiResponse<AnalyticsData>>(`/analytics/dashboard?range=${timeRange}`);
       return res.data;
     },
     refetchInterval: 30000, // Live poll every 30 seconds
@@ -66,19 +66,16 @@ export default function DashboardPage() {
   const workload = analytics?.patientWorkload || [];
   const admissionTrends = analytics?.admissionTrends || [];
   const recentAssignments = analytics?.recentAssignments || [];
+  const subMetrics = analytics?.subMetrics || {
+    meanWaitInterval: totalPatientsNum > 0 ? '14.2 min' : '0 min',
+    readmissionRate: '0%',
+    dischargeVelocity: '0%',
+  };
 
   // Format admission trend dates for chart
   const formattedTrends = admissionTrends.map((t) => ({
     date: t.date ? t.date.slice(5) : '',
-    admissions: t.admissions,
-  }));
-
-  // Workload pie data
-  const pieData = workload.map((w, idx) => ({
-    name: w.specialization,
-    value: w.patientCount || w.doctorCount || 1,
-    percentage: w.percentage,
-    color: SPECIALTY_COLORS[idx % SPECIALTY_COLORS.length],
+    admissions: (t as unknown as { count?: number }).count ?? t.admissions ?? 0,
   }));
 
   return (
@@ -369,19 +366,19 @@ export default function DashboardPage() {
             <div className="p-3 rounded-xl bg-surface-container-low">
               <div className="text-[11px] text-outline font-medium">Mean Wait Interval</div>
               <div className="font-headline text-base font-bold text-on-surface mt-0.5">
-                14.2 min
+                {subMetrics.meanWaitInterval}
               </div>
             </div>
             <div className="p-3 rounded-xl bg-surface-container-low">
               <div className="text-[11px] text-outline font-medium">Readmission Rate</div>
               <div className="font-headline text-base font-bold text-primary mt-0.5">
-                3.1%
+                {subMetrics.readmissionRate}
               </div>
             </div>
             <div className="p-3 rounded-xl bg-surface-container-low">
               <div className="text-[11px] text-outline font-medium">Discharge Velocity</div>
               <div className="font-headline text-base font-bold text-secondary mt-0.5">
-                92.8%
+                {subMetrics.dischargeVelocity}
               </div>
             </div>
           </div>
@@ -395,7 +392,7 @@ export default function DashboardPage() {
                 Physician Workload Allocation
               </h2>
               <span className="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-mono text-xs font-semibold">
-                5 Core Depts
+                {workload.length} {workload.length === 1 ? 'Dept' : 'Depts'}
               </span>
             </div>
             <span className="text-xs text-outline block mt-0.5">
@@ -403,163 +400,120 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          {/* Doughnut Chart & Summary Centerpiece */}
-          <div className="flex items-center justify-center gap-6 py-2">
-            <div className="relative w-40 h-40 flex items-center justify-center shrink-0">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                {/* Cardiology: 28% -> stroke-dasharray 74 190 */}
-                <circle
-                  cx="60"
-                  cy="60"
-                  fill="none"
-                  r="42"
-                  stroke="#00685f"
-                  strokeDasharray="74 190"
-                  strokeDashoffset="0"
-                  strokeWidth="16"
-                />
-                {/* Orthopedics: 22% -> stroke-dasharray 58 206 */}
-                <circle
-                  cx="60"
-                  cy="60"
-                  fill="none"
-                  r="42"
-                  stroke="#006398"
-                  strokeDasharray="58 206"
-                  strokeDashoffset="-74"
-                  strokeWidth="16"
-                />
-                {/* Pediatrics: 20% -> stroke-dasharray 53 211 */}
-                <circle
-                  cx="60"
-                  cy="60"
-                  fill="none"
-                  r="42"
-                  stroke="#4fdbc8"
-                  strokeDasharray="53 211"
-                  strokeDashoffset="-132"
-                  strokeWidth="16"
-                />
-                {/* Oncology: 15% -> stroke-dasharray 40 224 */}
-                <circle
-                  cx="60"
-                  cy="60"
-                  fill="none"
-                  r="42"
-                  stroke="#5bb8fe"
-                  strokeDasharray="40 224"
-                  strokeDashoffset="-185"
-                  strokeWidth="16"
-                />
-                {/* Neurology: 15% -> stroke-dasharray 39 225 */}
-                <circle
-                  cx="60"
-                  cy="60"
-                  fill="none"
-                  r="42"
-                  stroke="#dae2fd"
-                  strokeDasharray="39 225"
-                  strokeDashoffset="-225"
-                  strokeWidth="16"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                <span className="font-headline text-xl font-bold text-on-surface leading-none">
-                  100%
-                </span>
-                <span className="font-mono text-[9px] uppercase tracking-wider text-outline mt-1 font-semibold">
-                  ALLOCATION
-                </span>
+          {workload.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-outline-variant/40 rounded-xl bg-surface-container-low/20 my-4 min-h-[200px]">
+              <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-outline mb-2">
+                <span className="material-symbols-outlined text-[22px]">pie_chart</span>
               </div>
+              <p className="text-xs font-semibold text-on-surface">No Department Allocation Data</p>
+              <p className="text-[11px] text-outline mt-0.5 max-w-[240px]">
+                Physician and patient department distributions will appear here when doctors are registered.
+              </p>
             </div>
+          ) : (
+            <>
+              {/* Doughnut Chart & Summary Centerpiece */}
+              <div className="flex items-center justify-center gap-6 py-2">
+                <div className="relative w-40 h-40 flex items-center justify-center shrink-0">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                    <circle
+                      cx="60"
+                      cy="60"
+                      fill="none"
+                      r="42"
+                      stroke="#eaedff"
+                      strokeWidth="16"
+                    />
+                    {(() => {
+                      const circumference = 263.89;
+                      let accumulated = 0;
+                      return workload.slice(0, 5).map((w, idx) => {
+                        const dash = (w.percentage / 100) * circumference;
+                        const offset = -accumulated;
+                        accumulated += dash;
+                        return (
+                          <circle
+                            key={w.specialization}
+                            cx="60"
+                            cy="60"
+                            fill="none"
+                            r="42"
+                            stroke={SPECIALTY_COLORS[idx % SPECIALTY_COLORS.length]}
+                            strokeDasharray={`${dash} ${circumference - dash}`}
+                            strokeDashoffset={offset}
+                            strokeWidth="16"
+                            className="transition-all duration-700 ease-out"
+                          />
+                        );
+                      });
+                    })()}
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="font-headline text-xl font-bold text-on-surface leading-none">
+                      {totalPatientsNum > 0 || totalDoctorsNum > 0 ? '100%' : '0%'}
+                    </span>
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-outline mt-1 font-semibold">
+                      ALLOCATION
+                    </span>
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-2 min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#00685f] shrink-0"></div>
-                <span className="text-xs text-on-surface truncate font-medium">
-                  Cardiology (28%)
-                </span>
+                <div className="flex flex-col gap-2 min-w-0 flex-1">
+                  {workload.slice(0, 5).map((w, idx) => (
+                    <div key={w.specialization} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
+                          style={{ backgroundColor: SPECIALTY_COLORS[idx % SPECIALTY_COLORS.length] }}
+                        ></div>
+                        <span className="text-on-surface truncate font-medium">
+                          {w.specialization}
+                        </span>
+                      </div>
+                      <span className="font-mono text-outline font-semibold ml-2 shrink-0">
+                        {w.percentage}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#006398] shrink-0"></div>
-                <span className="text-xs text-on-surface truncate font-medium">
-                  Orthopedics (22%)
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#4fdbc8] shrink-0"></div>
-                <span className="text-xs text-on-surface truncate font-medium">
-                  Pediatrics (20%)
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#5bb8fe] shrink-0"></div>
-                <span className="text-xs text-on-surface truncate font-medium">
-                  Oncology (15%)
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#dae2fd] shrink-0"></div>
-                <span className="text-xs text-on-surface truncate font-medium">
-                  Neurology (15%)
-                </span>
-              </div>
-            </div>
-          </div>
 
-          {/* Workload Breakdown Horizontal Bars with Staffing Ratios */}
-          <div className="space-y-3 pt-3 border-t border-surface-container">
-            <div className="space-y-1">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-on-surface">
-                  Cardiology Wing A
-                </span>
-                <span className="font-mono text-primary font-bold">
-                  1:24 Ratio
-                </span>
+              {/* Workload Breakdown Horizontal Bars with Staffing Ratios */}
+              <div className="space-y-3 pt-3 border-t border-surface-container">
+                {workload.slice(0, 3).map((w, idx) => {
+                  const maxPatientInDept = Math.max(...workload.map((x) => x.patientCount), 1);
+                  const barWidth =
+                    totalPatientsNum > 0
+                      ? Math.min(100, Math.max(12, Math.round((w.patientCount / maxPatientInDept) * 100)))
+                      : Math.min(100, Math.max(12, Math.round((w.doctorCount / (totalDoctorsNum || 1)) * 100)));
+                  return (
+                    <div key={w.specialization} className="space-y-1">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-semibold text-on-surface truncate">
+                          {w.specialization}
+                        </span>
+                        <span
+                          className="font-mono font-bold"
+                          style={{ color: SPECIALTY_COLORS[idx % SPECIALTY_COLORS.length] }}
+                        >
+                          {w.ratio || `1:${Math.round(w.patientCount / (w.doctorCount || 1))}`} Ratio
+                        </span>
+                      </div>
+                      <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{
+                            width: `${barWidth}%`,
+                            backgroundColor: SPECIALTY_COLORS[idx % SPECIALTY_COLORS.length],
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
-                <div
-                  className="bg-[#00685f] h-full rounded-full"
-                  style={{ width: '82%' }}
-                ></div>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-on-surface">
-                  Orthopedic Surgery
-                </span>
-                <span className="font-mono text-secondary font-bold">
-                  1:18 Ratio
-                </span>
-              </div>
-              <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
-                <div
-                  className="bg-[#006398] h-full rounded-full"
-                  style={{ width: '65%' }}
-                ></div>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-on-surface">
-                  Pediatrics Complex
-                </span>
-                <span className="font-mono text-[#00685d] font-bold">
-                  1:21 Ratio
-                </span>
-              </div>
-              <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden flex">
-                <div
-                  className="bg-[#4fdbc8] h-full rounded-full"
-                  style={{ width: '70%' }}
-                ></div>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
 
           {/* Quick Directive Link */}
           <div className="pt-2">

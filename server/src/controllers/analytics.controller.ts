@@ -7,12 +7,13 @@ import { ApiResponse } from "../utils/ApiResponse.js";
  * GET /api/v1/analytics/dashboard
  */
 export const getDashboardMetrics = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const analytics = await getDashboardAnalytics();
+    const range = typeof req.query.range === "string" ? req.query.range : "30D";
+    const analytics = await getDashboardAnalytics(range);
     new ApiResponse(200, "Dashboard analytics retrieved successfully", analytics).send(res);
   } catch (error) {
     next(error);

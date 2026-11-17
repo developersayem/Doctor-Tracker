@@ -15,28 +15,27 @@ interface AdmissionsAreaChartProps {
   data: Array<{ date: string; admissions: number }>;
 }
 
-const DEFAULT_TRENDS = [
-  { date: 'Jan', admissions: 18 },
-  { date: 'Feb', admissions: 24 },
-  { date: 'Mar', admissions: 21 },
-  { date: 'Apr', admissions: 35 },
-  { date: 'May', admissions: 30 },
-  { date: 'Jun', admissions: 44 },
-  { date: 'Jul', admissions: 52 },
-  { date: 'Aug', admissions: 48 },
-  { date: 'Sep', admissions: 61 },
-  { date: 'Oct', admissions: 57 },
-  { date: 'Nov', admissions: 68 },
-  { date: 'Dec', admissions: 74 },
-];
-
 export default function AdmissionsAreaChart({ data }: AdmissionsAreaChartProps) {
-  const chartData = data && data.length > 0 ? data : DEFAULT_TRENDS;
+  const hasRealData = data && data.length > 0 && data.some((d) => d.admissions > 0);
+
+  if (!hasRealData) {
+    return (
+      <div className="h-full w-full flex flex-col items-center justify-center text-center p-6 border border-dashed border-outline-variant/40 rounded-xl bg-surface-container-low/20">
+        <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-outline mb-2">
+          <span className="material-symbols-outlined text-[22px]">show_chart</span>
+        </div>
+        <p className="text-xs font-semibold text-on-surface">No Patient Admissions Recorded</p>
+        <p className="text-[11px] text-outline mt-0.5 max-w-[280px]">
+          Daily encounter velocity will graph dynamically here as patients are admitted.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart
-        data={chartData}
+        data={data}
         margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
       >
         <defs>
@@ -69,6 +68,7 @@ export default function AdmissionsAreaChart({ data }: AdmissionsAreaChartProps) 
             fontSize: '12px',
           }}
           labelStyle={{ color: '#89f5e7', fontWeight: 600 }}
+          formatter={(value: number) => [`${value} Patients`, 'Admissions']}
         />
         <Area
           type="monotone"

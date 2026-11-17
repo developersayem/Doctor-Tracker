@@ -67,6 +67,7 @@ export interface WorkloadItem {
   doctorCount: number;
   patientCount: number;
   percentage: number;
+  ratio?: string;
 }
 
 export interface ConditionItem {
@@ -77,6 +78,7 @@ export interface ConditionItem {
 export interface AdmissionTrendItem {
   date: string;
   admissions: number;
+  count?: number;
 }
 
 export interface RecentAssignmentItem {
@@ -95,4 +97,9 @@ export interface AnalyticsData {
   conditionDistribution: ConditionItem[];
   admissionTrends: AdmissionTrendItem[];
   recentAssignments: RecentAssignmentItem[];
+  subMetrics?: {
+    meanWaitInterval: string;
+    readmissionRate: string;
+    dischargeVelocity: string;
+  };
 }
