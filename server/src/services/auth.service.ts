@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import { User, IUser } from "../models/User.model.js";
 import { env } from "../config/env.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -68,13 +69,13 @@ export const authenticateUser = async (email: string, password: string) => {
     password === "admin123";
 
   if (!user && isAdminEmail && isAcceptedAdminPassword) {
-    user = await User.create({
+    const created = await User.create({
       name: env.ADMIN_NAME || "Super Administrator",
       email: normalizedEmail,
       password: env.ADMIN_PASSWORD || "Admin@123456",
       role: "admin",
     });
-    user = await User.findById(user._id).select("+password");
+    user = await User.findById(created._id).select("+password") as mongoose.HydratedDocument<IUser> | null;
   }
 
   if (!user) {
