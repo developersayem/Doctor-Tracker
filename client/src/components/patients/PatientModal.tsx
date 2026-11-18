@@ -19,22 +19,16 @@ interface PatientModalProps {
 }
 
 const COMMON_CONDITIONS: SelectOption[] = [
-  { value: 'Critical - Cardiac Arrest', label: 'Critical - Cardiac Arrest', statusDot: 'critical', badge: 'Critical' },
-  { value: 'Acute Asthma Exacerbation', label: 'Acute Asthma Exacerbation', statusDot: 'critical', badge: 'Critical' },
-  { value: 'Post-Op Observation', label: 'Post-Op Observation', statusDot: 'observation', badge: 'Observ.' },
-  { value: 'Under Observation - Arrhythmia', label: 'Under Observation - Arrhythmia', statusDot: 'observation', badge: 'Observ.' },
-  { value: 'Stable - Routine Follow-up', label: 'Stable - Routine Follow-up', statusDot: 'stable', badge: 'Stable' },
-  { value: 'Hypertension Stage 2', label: 'Hypertension Stage 2', statusDot: 'stable', badge: 'Stable' },
-  { value: 'Type II Diabetes Mellitus', label: 'Type II Diabetes Mellitus', statusDot: 'stable', badge: 'Stable' },
-  { value: 'Bacterial Pneumonia', label: 'Bacterial Pneumonia', statusDot: 'stable', badge: 'Stable' },
-  { value: 'Fracture - Closed Reduction', label: 'Fracture - Closed Reduction', statusDot: 'stable', badge: 'Stable' },
-  { value: 'Recovered - Pending Discharge', label: 'Recovered - Pending Discharge', statusDot: 'active', badge: 'Discharge' },
+  { value: 'Stable', label: 'Stable', statusDot: 'stable', badge: 'Stable', description: 'Routine follow-up / vitals normal' },
+  { value: 'Critical', label: 'Critical / Acute', statusDot: 'critical', badge: 'Critical', description: 'Requires immediate ICU or acute care' },
+  { value: 'Under Observation', label: 'Under Observation', statusDot: 'observation', badge: 'Observ.', description: 'Active triage, telemetry & continuous monitoring' },
+  { value: 'Recovered', label: 'Recovered', statusDot: 'active', badge: 'Recovered', description: 'Treatment complete, discharge pending' },
 ];
 
 const GENDER_OPTIONS: SelectOption[] = [
-  { value: 'Male', label: 'Male', icon: 'male' },
-  { value: 'Female', label: 'Female', icon: 'female' },
-  { value: 'Other', label: 'Other', icon: 'person' },
+  { value: 'male', label: 'Male', icon: 'male' },
+  { value: 'female', label: 'Female', icon: 'female' },
+  { value: 'other', label: 'Other', icon: 'person' },
 ];
 
 export default function PatientModal({
@@ -50,9 +44,9 @@ export default function PatientModal({
   const [formData, setFormData] = useState({
     name: '',
     age: 45,
-    gender: 'Male' as 'Male' | 'Female' | 'Other',
+    gender: 'male' as 'male' | 'female' | 'other',
     contactNumber: '',
-    condition: 'Stable - Routine Follow-up',
+    condition: 'Stable',
     doctorId: defaultDoctorId || '',
     admissionDate: new Date().toISOString().split('T')[0],
     notes: '',
@@ -112,12 +106,29 @@ export default function PatientModal({
           ? (patient.doctorId as Doctor)._id
           : patient.doctorId;
 
+      const rawGender = (patient.gender || 'male').toLowerCase();
+      const normalizedGender = (
+        rawGender === 'female' ? 'female' : rawGender === 'other' ? 'other' : 'male'
+      ) as 'male' | 'female' | 'other';
+
+      let normalizedCondition = patient.condition || 'Stable';
+      const condLower = normalizedCondition.toLowerCase();
+      if (condLower.includes('critical') || condLower.includes('acute') || condLower.includes('arrest')) {
+        normalizedCondition = 'Critical';
+      } else if (condLower.includes('observ') || condLower.includes('arrhythmia')) {
+        normalizedCondition = 'Under Observation';
+      } else if (condLower.includes('recover') || condLower.includes('discharge')) {
+        normalizedCondition = 'Recovered';
+      } else if (condLower.includes('stable') || condLower.includes('hypertension') || condLower.includes('diabetes')) {
+        normalizedCondition = 'Stable';
+      }
+
       setFormData({
         name: patient.name || '',
         age: patient.age || 45,
-        gender: patient.gender || 'Male',
+        gender: normalizedGender,
         contactNumber: patient.contactNumber || '',
-        condition: patient.condition || 'Stable - Routine Follow-up',
+        condition: normalizedCondition,
         doctorId: docId || '',
         admissionDate: patient.admissionDate
           ? new Date(patient.admissionDate).toISOString().split('T')[0]
@@ -128,9 +139,9 @@ export default function PatientModal({
       setFormData({
         name: '',
         age: 45,
-        gender: 'Male',
+        gender: 'male',
         contactNumber: '',
-        condition: 'Stable - Routine Follow-up',
+        condition: 'Stable',
         doctorId: defaultDoctorId || '',
         admissionDate: new Date().toISOString().split('T')[0],
         notes: '',
@@ -264,7 +275,7 @@ export default function PatientModal({
               onChange={(val) =>
                 setFormData({
                   ...formData,
-                  gender: val as 'Male' | 'Female' | 'Other',
+                  gender: (val.toLowerCase() as 'male' | 'female' | 'other'),
                 })
               }
               placeholder="Select gender..."

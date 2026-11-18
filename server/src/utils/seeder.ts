@@ -257,6 +257,32 @@ export const seedDataset = async (isAuto = false): Promise<void> => {
       const admissionDate = new Date();
       admissionDate.setDate(admissionDate.getDate() - daysAgo);
 
+      const clinicalNotesByCondition: Record<PatientCondition, string[]> = {
+        Critical: [
+          "Patient admitted with acute distress. Transferred to ICU care; vitals under continuous electronic monitoring.",
+          "Emergency intake required oxygen administration. Cardiac telemetry and arterial blood gas monitored.",
+          "Acute onset of severe symptoms. Administered intravenous medication; close hemodynamic oversight maintained.",
+        ],
+        "Under Observation": [
+          "Patient admitted for post-procedure telemetry and 24-hour observation. Pain managed effectively.",
+          "Continuous vital stats monitoring in step-down unit. Diagnostic ultrasound and lab panel pending review.",
+          "Observation for cardiac rhythm stability and medication response. Blood pressure trending toward normal.",
+        ],
+        Stable: [
+          "Routine clinical intake. Patient reports well-controlled symptoms on current outpatient medication regimen.",
+          "Follow-up consultation for chronic symptom management. Routine lab work normal, continuing standard protocol.",
+          "Patient ambulatory and conversational. Vital signs within acceptable limits; routine monitoring ongoing.",
+        ],
+        Recovered: [
+          "Clinical course completed satisfactorily. Follow-up diagnostic markers resolved; discharge plan approved.",
+          "Patient responded excellently to antibiotic and supportive therapy. Discharge summary and prescriptions issued.",
+          "Post-surgical recovery complete. Patient cleared for return to normal daily activities with 30-day follow-up.",
+        ],
+      };
+
+      const conditionNotes = clinicalNotesByCondition[condition];
+      const notes = conditionNotes[Math.floor(Math.random() * conditionNotes.length)];
+
       patientsToInsert.push({
         name: `${firstName} ${lastName}`,
         age,
@@ -265,6 +291,7 @@ export const seedDataset = async (isAuto = false): Promise<void> => {
         condition,
         contactNumber: `+1-555-${String(1000 + i).padStart(4, "0")}`,
         admissionDate,
+        notes,
         createdAt: admissionDate,
       });
     }

@@ -11,6 +11,7 @@ export interface IPatient extends Document {
   condition: PatientCondition;
   contactNumber: string;
   admissionDate: Date;
+  notes?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -65,6 +66,12 @@ const patientSchema = new Schema<IPatient>(
       type: Date,
       default: Date.now,
       index: true,
+    },
+    notes: {
+      type: String,
+      trim: true,
+      maxlength: [2000, "Notes cannot exceed 2000 characters"],
+      default: "",
     },
   },
   {
