@@ -28,7 +28,7 @@ export interface Patient {
   _id: string;
   name: string;
   age: number;
-  gender: 'Male' | 'Female' | 'Other';
+  gender: 'male' | 'female' | 'other' | 'Male' | 'Female' | 'Other';
   contactNumber: string;
   condition: string;
   doctorId: string | Doctor;

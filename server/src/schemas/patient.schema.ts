@@ -72,6 +72,11 @@ export const createPatientSchema = z.object({
     .datetime({ offset: true })
     .or(z.string().regex(/^\d{4}-\d{2}-\d{2}/, "Invalid date format"))
     .optional(),
+  notes: z
+    .string()
+    .max(2000, "Notes cannot exceed 2000 characters")
+    .optional()
+    .default(""),
 });
 
 /**

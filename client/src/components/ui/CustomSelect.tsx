@@ -61,8 +61,21 @@ export default function CustomSelect({
     return opt;
   });
 
-  // Find currently selected option
-  const selectedOption = normalizedOptions.find((opt) => opt.value === value);
+  // Find currently selected option with case-insensitive and label matching fallback
+  const selectedOption =
+    normalizedOptions.find((opt) => opt.value === value) ||
+    normalizedOptions.find(
+      (opt) => value && opt.value.toLowerCase() === value.toLowerCase()
+    ) ||
+    normalizedOptions.find(
+      (opt) => value && opt.label.toLowerCase() === value.toLowerCase()
+    ) ||
+    normalizedOptions.find(
+      (opt) =>
+        value &&
+        (opt.value.toLowerCase().startsWith(value.toLowerCase()) ||
+          value.toLowerCase().startsWith(opt.value.toLowerCase()))
+    );
 
   // Filter options if searchable
   const filteredOptions = normalizedOptions.filter((opt) => {
@@ -197,6 +210,12 @@ export default function CustomSelect({
                   {selectedOption.badge}
                 </span>
               )}
+            </div>
+          ) : value ? (
+            <div className="flex items-center gap-2 truncate">
+              <span className="truncate font-medium text-on-surface">
+                {value}
+              </span>
             </div>
           ) : (
             <span className="text-outline truncate">{placeholder}</span>
